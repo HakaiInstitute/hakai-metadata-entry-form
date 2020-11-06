@@ -49,3 +49,45 @@ More information about the CIOOS essential ocean variables that you’d like to 
 
 Including information about the data types present in the dataset using standard vocabularies such as [Climate and Forecast names](https://cfconventions.org/) or the [BODC Parameter Usage Vocabulary](https://www.bodc.ac.uk/resources/vocabularies/parameter_codes/) are of particular interest. [GCMD keywords](http://vocab.nerc.ac.uk/collection/P04/current/) are also useful, however these can be automatically generated from the Climate and Forecast names, if those are provided.
 
+### Status
+
+Typically the dataset status should be set to one of the following:
+* **completed** This is a modern dataset that includes full platform/instrument metadata and data collection has recently completed.
+* **historical** This is a historical dataset where some key metadata elements, in particular instrument and platform metadata, can no longer be obtained.
+* **onGoing** Data will be periodically added to this dataset as it comes in from a real-time or near real-time data collection instrument or platform.
+
+If none of these options are applicable, see [here](https://wiki.esipfed.org/ISO_19115-3_Codelists#MD_ProgressCode) for the full list of status options that can be defined, with brief descriptions.
+
+### Category
+
+This should nearly always be set to 'oceans'.
+
+If oceans is not applicable, see [here](https://wiki.esipfed.org/ISO_19115-3_Codelists#MD_TopicCategoryCode) for the full list of category options that can be defined, with brief descriptions.
+
+### Maintenance Frequency (Data)
+
+**Note** This element is not on the form, but probably should be.
+
+This should usually be set to 'asNeeded'.
+
+For updates to the dataset, note that the update frequency described here does not include updates where only new data is added to the datasets (e.g. real-time or near time ‘onGoing’ status datasets).
+
+From the ISO 19115-1 2014 standard, the maintenance frequency we’re interested in here is the “frequency with which changes and additions are made to the resource after the initial resource is completed,” (or produced/published). These could be things like manually fixing known incorrect values, or running automated QC software on the data after initial release.
+
+See [here](https://wiki.esipfed.org/ISO_19115-3_Codelists#MD_MaintenanceFrequencyCode) for further information about the available options.
+
+### Data collection start date
+
+Start date of data collection.
+
+### Data collection end date
+
+**Note** This element is not on the form, but probably should be.
+
+End date for data collection.
+
+### Publication date
+
+### Revision date
+
+
