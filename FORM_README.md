@@ -10,7 +10,7 @@
 6. [DISTRIBUTION](#distribution)
 7. [PLATFORM](#platform)
 
-## Initial setup
+## INITIAL SETUP
 
 Login to the system using your preferred Google account. There is currently no restriction on who can add metadata records.
 
