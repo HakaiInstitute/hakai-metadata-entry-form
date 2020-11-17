@@ -110,7 +110,29 @@ Using ‘licence’ here is a good default value.
 
 ## SPATIAL
 
+### Vertical Extent 
+
+Captures the minimum and maximum depths (or height from sea floor) where the instrument recorded data. 
+
+Note that a vertical reference system must be defined here, though typically this is mainly important to gauge which of depth or height from the sea floor are positive.
+
+Lowest vertical value contained in the dataset (in metres)
+
+Highest vertical value contained in the dataset (in metres)
+
+The vertical coordinate reference system that was used to specify the highest and lowest vertical values.
+This is typically specified as EPSG::5831, in cases where the vertical values are measured as depths from the surface, or else as EPSG::5829, in cases where the vertical values are measured as heights from sea floor.
+
+Suggested item(s)
+
+● EPSG::5831 (positive depth)
+● EPSG::5829 (positive height from sea floor)
+
 ## CONTACT
+
+### Distributor Contact Information 
+
+A distributor is an organization that may or may not also be the owner or originator of the dataset, but in either case has taken on the responsibilities of making the dataset accessible to others. Principle person or organization distributing the dataset. 
 
 ## DISTRIBUTION
 
