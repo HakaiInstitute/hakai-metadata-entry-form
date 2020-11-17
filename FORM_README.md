@@ -26,13 +26,13 @@ CIOOS Region | Email
 ------------ | -----
 Atlantic     | info@cioosatlantic.ca
 
-## Identification
+## IDENTIFICATION
 
-### Title
+### Dataset Title
 
 This will define the dataset title, which corresponds to the header shown in CKAN for the dataset.
 
-### Abstract
+### Dataset Abstract
 
 Enter the abstract for the dataset. These will define the summary text that is shown for this dataset in CKAN, so browsing some datasets at [](https://cioosatlantic.ca/ckan) can help give a sense of the type of descriptions that are typically used for this.
 
@@ -44,17 +44,17 @@ Suggested abstract points:
 * **Who:** participants, staff.
 * **Why:** a high level statement on the outcome this data is meant to inform. 
 
-### Essential ocean variables
+### Essential ocean variables used
 
 The essential ocean variables (EOVs) specified here will be relied on for searching and filtering for this dataset within the CIOOS metadata catalogue and asset map. Review the types of data that are present in the dataset and select the CIOOS EOVs that describe these data types.
 
 More information about the CIOOS essential ocean variables that you’d like to associate with this dataset can be found [here](https://cioosatlantic.ca/eovs/). You can also find out more about the wider EOV list used by the Global Ocean Observing System (GOOD) [here](https://www.goosocean.org/index.php?option=com_content&view=article&id=14&Itemid=114).
 
-### Keywords
+### Data Keywords
 
 Including information about the data types present in the dataset using standard vocabularies such as [Climate and Forecast names](https://cfconventions.org/) or the [BODC Parameter Usage Vocabulary](https://www.bodc.ac.uk/resources/vocabularies/parameter_codes/) are of particular interest. [GCMD keywords](http://vocab.nerc.ac.uk/collection/P04/current/) are also useful, however these can be automatically generated from the Climate and Forecast names, if those are provided.
 
-### Status
+### Data Status
 
 Typically the dataset status should be set to one of the following:
 * **completed** This is a modern dataset that includes full platform/instrument metadata and data collection has recently completed.
@@ -63,13 +63,13 @@ Typically the dataset status should be set to one of the following:
 
 If none of these options are applicable, see [here](https://wiki.esipfed.org/ISO_19115-3_Codelists#MD_ProgressCode) for the full list of status options that can be defined, with brief descriptions.
 
-### Category
+### Data Category
 
 This should nearly always be set to 'oceans'.
 
 If oceans is not applicable, see [here](https://wiki.esipfed.org/ISO_19115-3_Codelists#MD_TopicCategoryCode) for the full list of category options that can be defined, with brief descriptions.
 
-### Maintenance Frequency (Data)
+### Data Maintenance Frequency
 
 **Note** This element is not on the form, but probably should be.
 
@@ -94,5 +94,26 @@ End date for data collection.
 ### Publication date
 
 ### Revision date
+
+## METADATA
+
+### What licence, if any, applies to this dataset? 
+
+We recommend that the Creative Commons Attribution 4.0 International licence (CC-BY 4.0) be applied as the default licence for all datasets that will be made available through the CIOOS platform. This allows for open sharing and adaptation of the data provided that the original creator is attributed.
+Releasing the data as public domain (CC0), which imposes no restrictions of any kind is also acceptable. For datasets made available by Government of Canada departments and agencies, the Open Government Licence - Canada can be used, which is very similar to CC-BY as it allows for open sharing and adaptation of the data provided that the original creator of the data is properly attributed.
+
+### What are the limitations affecting the fitness for use of the resource or metadata?
+
+From ISO19115-1:2014: “constraints applied to assure the protection of privacy or intellectual property, and any special restrictions or limitations or warnings on using the resource or metadata.
+
+Using ‘licence’ here is a good default value.
+
+## SPATIAL
+
+## CONTACT
+
+## DISTRIBUTION
+
+## PLATFORM
 
 
