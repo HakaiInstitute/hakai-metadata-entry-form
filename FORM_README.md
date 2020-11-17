@@ -4,6 +4,11 @@
 
 1. [Initial setup](#initial-sample)
 2. [Identification](#identification)
+3. [Metadata](#metadata)
+4. [Spatial](#spatial)
+5. [Contact](#contact)
+6. [Distribution](#distribution)
+7. [Platform](#platform)
 
 ## Initial setup
 
