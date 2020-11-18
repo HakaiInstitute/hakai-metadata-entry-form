@@ -2,13 +2,13 @@
 
 ## Table of contents
 
-1. [INITIAL SETUP](#initial-sample)
-2. [IDENTIFICATION](#identification)
-3. [METADATA](#metadata)
-4. [SPATIAL](#spatial)
-5. [CONTACT](#contact)
-6. [DISTRIBUTION](#distribution)
-7. [PLATFORM](#platform)
+1. [Initial setup](#initial-sample)
+2. [Identification](#identification)
+3. [Metadata](#metadata)
+4. [Spatial](#spatial)
+5. [Contact](#contact)
+6. [Distribution](#distribution)
+7. [Platform](#platform)
 
 ## INITIAL SETUP
 
