@@ -32,7 +32,7 @@ In some cases we will also refer to the CIOOS asset map, which can be viewed as 
 
 Note that many of the elements have bilingual requirements. A 'Translate' button can be used to automatically translate the text you've entered in French or English into the other language, using AWS translation tools. 
 
-### Contact a member of the CIOOS engagement team within your region if you have questions about how to fill in any of these fields.
+### Contact a member of the CIOOS Engagement/ Technical Teams within your Regional Association if you have questions about how to fill in any of these fields, or other.
 
 CIOOS Region | Email
 ------------ | -----
