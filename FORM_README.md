@@ -12,15 +12,27 @@
 
 ## INITIAL SETUP
 
-Login to the system using your preferred Google account. There is currently no restriction on who can add metadata records.
+### 1. Login to the system using your preferred Google account. 
 
-Once you have logged in, select the CIOOS region that the data was collected within. If the data spans more than one region, select the region whose Regional Association you have been working with. The region selection will be used to notify a reviewer from that region to review the record once you have submitted the completed record for review. As you add records, please ensure you have filled out contact information for the metadata contact as the reviewer will use this to contact you with any questions about the metadata entry.
+There is currently no restriction on who can add metadata records.
 
-After selecting your region, click New Record to begin. The sections of the metadata form to fill in are listed as separate tabs across the top of the page. The sections below describe how to fill in the entries within each of these tabs. Many of these elements will translate to entries shown in CKAN, the CIOOS metadata catalogue. An example CKAN record for an existing dataset can be viewed [here](https://cioosatlantic.ca/ckan/dataset/org-coastalaction_ec2b8fbb-5482-46e2-af71-9e85d58b8922). In some cases we will also refer to the CIOOS asset map, which can be viewed as the map-based dataset browser, which is shown on the main CIOOS home page [here](https://cioos.ca).
+### 2. Select the CIOOS marine region that the data was collected within.
+
+The applicable waters are green. If the data spans more than one marine region, select the region whose Regional Association you have been working with. The marine region selection will be used to notify a reviewer from that Regional Association to review the metadata record once you have submitted the completed record for review. 
+
+As you add records, please ensure you have input the contact information for the metadata contact, as the reviewer will use this to contact you with any questions about the metadata entry.
+
+### 3. Click New Record to begin. 
+
+The sections of the metadata form to fill in are listed as separate tabs across the top of the page. The sections below describe how to fill in the entries within each of these tabs. 
+
+Many of these elements will translate to entries shown in CKAN, the CIOOS metadata catalogue. An example CKAN record for an existing dataset can be viewed [here](https://cioosatlantic.ca/ckan/dataset/org-coastalaction_ec2b8fbb-5482-46e2-af71-9e85d58b8922). 
+
+In some cases we will also refer to the CIOOS asset map, which can be viewed as the map-based dataset browser, shown on the main CIOOS home page [here](https://cioos.ca).
 
 Note that many of the elements have bilingual requirements. A 'Translate' button can be used to automatically translate the text you've entered in French or English into the other language, using AWS translation tools. 
 
-Contact a member of the CIOOS engagement team within your region if you have questions about how to fill in any of these fields.
+### Contact a member of the CIOOS engagement team within your region if you have questions about how to fill in any of these fields.
 
 CIOOS Region | Email
 ------------ | -----
