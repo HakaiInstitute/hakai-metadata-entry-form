@@ -18,6 +18,6 @@ jobs:
         with:
           args: hosting:channel:delete pr${{github.event.number}}-${{steps.get-short-name.outputs.id}} --force
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
           PROJECT_ID: cioos-metadata-form-dev
           GITHUB_AUTH: ${{ secrets.ISSUE_CREATOR_PAT }}
+          GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
