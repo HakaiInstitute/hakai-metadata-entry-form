@@ -10,7 +10,7 @@ setup(
     name="firebase_to_xml",
     version="0.1",
     description="Python module translates metadata records from" + "Firebase into XML",
-    url="https://github.com/cioos-siooc/metadata-entry-form",
+    url="https://github.com/hakaiinstitute/hakai-metadata-entry-form",
     packages=["firebase_to_xml"],
     package_data={'firebase_to_xml': ['resources/*.json']},
     include_package_data=True,
@@ -19,6 +19,6 @@ setup(
         "google-auth",
         "google-oauth",
         "python-dotenv",
-        "metadata_xml@git+https://github.com/cioos-siooc/metadata-xml.git",
+        "metadata_xml@git+https://github.com/hakaiinstitute/metadata-xml.git",
     ],
 )

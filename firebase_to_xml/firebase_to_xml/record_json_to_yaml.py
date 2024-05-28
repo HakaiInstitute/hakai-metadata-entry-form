@@ -88,7 +88,7 @@ def record_json_to_yaml(record):
     language = record.get("language")
     region = record.get("region")
 
-    base_url = "https://cioos-siooc.github.io/metadata-entry-form#"
+    base_url = "https://hakaiinstitute.github.io/hakai-metadata-entry-form#"
     full_url = f"{base_url}/{language}/{region}/{user_id}/{record_id}"
 
 
