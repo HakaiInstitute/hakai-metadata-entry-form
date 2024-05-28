@@ -19,7 +19,7 @@ const regions = {
       fr:
         "Le CIOOS Pacifique intègre les données de la côte ouest du Canada, de l'entrée Dixon au détroit de Juan de Fuca.",
     },
-    showInRegionSelector: true,
+    showInRegionSelector: false,
   },
 
   stlaurent: {
@@ -45,7 +45,7 @@ const regions = {
       fr:
         "L'Observatoire global du Saint-Laurent intègre les données du Saint-Laurent, des Grands Lacs jusqu'au Golfe",
     },
-    showInRegionSelector: true,
+    showInRegionSelector: false,
   },
   atlantic: {
     title: { en: "CIOOS Atlantic", fr: "SIOOC Atlantique" },
@@ -66,7 +66,7 @@ const regions = {
       fr:
         "Le CIOOS Atlantique intègre les données de la côte est du Canada, du Labrador à la baie de Fundy.",
     },
-    showInRegionSelector: true,
+    showInRegionSelector: false,
   },
 
   iys: {
@@ -82,7 +82,7 @@ const regions = {
       en: "https://iys.hakai.org/dataset/",
     },
     introPageText: { en: "", fr: "" },
-    showInRegionSelector: false,
+    showInRegionSelector: true,
   },
   hakai: {
     title: { en: "Hakai", fr: "Hakai" },
@@ -97,7 +97,7 @@ const regions = {
       en: "https://catalogue.hakai.org/",
     },
     introPageText: { en: "", fr: "" },
-    showInRegionSelector: false,
+    showInRegionSelector: true,
   },
   test: {
     title: { en: "Test", fr: "Test" },
