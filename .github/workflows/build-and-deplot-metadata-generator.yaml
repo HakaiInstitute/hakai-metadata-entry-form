@@ -1,0 +1,78 @@
+name: Build and Deploy Metadata Generator Docker Image
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "cioos-records-update/**"
+  workflow_dispatch:
+
+
+env:
+  DOCKER_BUILDKIT: 1
+  COMPOSE_DOCKER_CLI_BUILD: 1
+  RUN_LOCAL_AUTH: false
+  TULAID: tula_test_id
+  HUSKY: 0
+  AWS_REGION: us-east-1
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_CTD_BUCKET: ${{ secrets.AWS_CTD_BUCKET }}
+
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Login to Container Registry
+      uses: docker/login-action@v3
+      with:
+            registry: ghcr.io
+            username: hakai-it
+            password: ${{ secrets.CI_TOKEN }}
+
+    - name: Preset WEB Image Name
+      run: echo "WEB_IMAGE_URL=$(echo ghcr.io/hakaiinstitute/img-captain-metadata-generator-web:$(echo ${{ github.sha }} | cut -c1-7) | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
+    - name: Preset PROXY Image Name
+      run: echo "PROXY_IMAGE_URL=$(echo ghcr.io/hakaiinstitute/img-captain-metadata-generator-proxy:$(echo ${{ github.sha }} | cut -c1-7) | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
+    - name: Build and push Docker Image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./Dockerfile
+        push: true
+        tags: ${{ env.WEB_IMAGE_URL }}
+
+    - name: Build and push Docker Image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./Dockerfile_nginx
+        push: true
+        tags: ${{ env.PROXY_IMAGE_URL }}
+
+    - name: Deploy Image to CapRrover
+      uses: caprover/deploy-from-github@v1.1.2
+      with:
+        server: "${{ secrets.CAPROVER_SERVER }}"
+        app: "${{ secrets.WEB_APP_NAME }}"
+        token: "${{ secrets.WEB_APP_TOKEN }}"
+        image: ${{ env.WEB_IMAGE_URL }}
+
+    - name: Deploy Image to CapRrover
+      uses: caprover/deploy-from-github@v1.1.2
+      with:
+        server: "${{ secrets.CAPROVER_SERVER }}"
+        app: "${{ secrets.PROXY_APP_NAME }}"
+        token: "${{ secrets.PROXY_APP_TOKEN }}"
+        image: ${{ env.PROXY_IMAGE_URL }}
