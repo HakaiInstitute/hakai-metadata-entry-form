@@ -1,8 +1,11 @@
 const functions = require("firebase-functions");
+const { defineString } = require('firebase-functions/params');
 const https = require("https");
 const axios = require("axios");
 
-const urlBase = "https://pac-dev1.cioos.org/cioos-xml/";
+const generatorURL = defineString('RECORD_GENERATOR_URL');
+const urlBase = process.env.RECORD_GENERATOR_URL || generatorURL.value() || "https://pac-dev1.cioos.org/cioos-xml/";
+
 
 function getRecordFilename(record) {
   return `${record.title[record.language].slice(
