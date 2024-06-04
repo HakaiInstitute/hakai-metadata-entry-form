@@ -13,6 +13,32 @@ from metadata_xml.template_functions import metadata_to_xml
 
 import sentry_sdk
 
+from git import Repo
+# make sure .git folder is properly configured
+PATH_OF_GIT_REPO = r'xml/.git'
+COMMIT_MESSAGE = 'comment from python script'
+
+def git_pull():
+    try:
+        repo = Repo(PATH_OF_GIT_REPO)
+        origin = repo.remote(name='origin')
+        origin.pull()
+    except Exception as e:
+        print('Some error occurred while pulling the code')
+        print(e)
+
+
+def git_push(files):
+    try:
+        repo = Repo(PATH_OF_GIT_REPO)                
+        repo.git.add([files])
+        repo.index.commit(COMMIT_MESSAGE)
+        origin = repo.remote(name='origin')
+        origin.push()
+    except Exception as e:
+        print('Some error occurred while pushing the code')
+        print(e)
+
 sentry_sdk.init(
     dsn="https://8fd4b6885cc447c0b11aa0cb3009b0e3@o56764.ingest.us.sentry.io/5493983",
 
@@ -67,7 +93,9 @@ def get_complete_path(status, region, basename,file_suffix):
 def recordDelete():
     filenameToDelete = request.args.get("filename")
     # so anyone can delete any xml file hmm
+    git_pull()
     delete_record(filenameToDelete)
+    git_push([filenameToDelete])
     return jsonify(message="record deleted")
 
 
@@ -93,6 +121,8 @@ def recordUpdate():
     
     xml_filename = get_complete_path(status, region, basename,'.xml')
     yaml_filename = get_complete_path(status, region, basename,'.yaml')
+
+    git_pull()
 
     # delete file if exists already
     print(basename)
@@ -120,6 +150,8 @@ def recordUpdate():
             g.write(record_yaml)
             print("wrote", yaml_filename)
 
+        git_push([xml_filename.replace('xml//', ''),
+                 yaml_filename.replace('xml//', '')])
         url = waf_url + basename
         
         # returned value doesnt do anything
