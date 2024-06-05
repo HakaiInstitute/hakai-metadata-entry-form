@@ -193,5 +193,15 @@ def resource_not_found(e):
     return make_response(jsonify(error="Not found!"), 404)
 
 
+def setup_git_credentials():
+    GH_USERNAME = os.environ.get("GH_USERNAME", None)
+    GH_PAT = os.environ.get("GH_PAT", None)
+    print("Running Git configuration")
+    if GH_USERNAME and GH_PAT:
+        cmd = f'git config --global credential.helper "!f() {{ echo \\"username={GH_USERNAME}\\"; echo \\"password={GH_PAT}\\"; }}; f"'
+        subprocess.run(cmd, shell=True)
+        print("Completed Git configuration")
+
 if __name__ == "__main__":
+    app.before_first_request(setup_git_credentials)
     app.run()
