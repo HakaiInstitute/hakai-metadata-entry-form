@@ -52,6 +52,9 @@ jobs:
         file: ./cioos-records-update/Dockerfile
         push: true
         tags: ${{ env.WEB_IMAGE_URL }}
+        build-args: |
+          GH_USERNAME =${{ secrets.GH_USERNAME }}
+          GH_PAT =${{ secrets.GH_PAT }}
 
     - name: Build and push Docker Image
       uses: docker/build-push-action@v5
