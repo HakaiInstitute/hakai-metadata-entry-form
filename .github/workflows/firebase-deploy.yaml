@@ -36,7 +36,7 @@ jobs:
           echo "REACT_APP_GOOGLE_CLOUD_API_KEY_DEV=${{ secrets.REACT_APP_GOOGLE_CLOUD_API_KEY_DEV }}" >> .env
           echo "RECORD_GENERATOR_URL=${{ secrets.RECORD_GENERATOR_URL }}" >> .env
           echo "Setting Firebase Project..."
-          firebase use --add cioos-metadata-form --token ${{ secrets.FIREBASE_TOKEN }}
+          firebase use default
           echo "Deploying to Firebase..."
           firebase deploy --only functions --token ${{ secrets.FIREBASE_TOKEN }}
         working-directory: firebase-functions/functions
