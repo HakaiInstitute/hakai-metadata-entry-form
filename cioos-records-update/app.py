@@ -55,6 +55,7 @@ firebase_auth_key_json = json.loads(os.environ.get('FIREBASE_SERVICE_ACCOUNT_KEY
 xml_folder = "xml"
 
 waf_url = "https://pac-dev1.cioos.org/dev/metadata/"
+
 app = Flask(__name__)
 
 def delete_record(basename):
@@ -192,16 +193,19 @@ def recordToYAML():
 def resource_not_found(e):
     return make_response(jsonify(error="Not found!"), 404)
 
-
-def setup_git_credentials():
-    GH_USERNAME = os.environ.get("GH_USERNAME", None)
-    GH_PAT = os.environ.get("GH_PAT", None)
+# Setup Git Credentials
+GH_USERNAME = os.environ.get("GH_USERNAME", None)
+GH_PAT = os.environ.get("GH_PAT", None)
+if GH_USERNAME and GH_PAT:
     print("Running Git configuration")
-    if GH_USERNAME and GH_PAT:
-        cmd = f'git config --global credential.helper "!f() {{ echo \\"username={GH_USERNAME}\\"; echo \\"password={GH_PAT}\\"; }}; f"'
-        subprocess.run(cmd, shell=True)
-        print("Completed Git configuration")
+    repo = Repo(PATH_OF_GIT_REPO)
+    origin = repo.remote(name='origin')
+    repoURL = origin.url
+    repoURL = repoURL.replace("https://", "https://%s:%s@" % (GH_USERNAME,GH_PAT))
+    cw = origin.config_writer
+    cw.set_value('url', repoURL)
+    cw.release()
+    print("Completed Git configuration")
 
 if __name__ == "__main__":
-    app.before_first_request(setup_git_credentials)
     app.run()
