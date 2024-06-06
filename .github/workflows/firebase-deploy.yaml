@@ -34,7 +34,6 @@ jobs:
           echo "GITHUB_AUTH=${{ secrets.ISSUE_CREATOR_PAT }}" >> .env
           echo "REACT_APP_GOOGLE_CLOUD_API_KEY=${{ secrets.REACT_APP_GOOGLE_CLOUD_API_KEY }}" >> .env
           echo "REACT_APP_GOOGLE_CLOUD_API_KEY_DEV=${{ secrets.REACT_APP_GOOGLE_CLOUD_API_KEY_DEV }}" >> .env
-          echo "RECORD_GENERATOR_URL=${{ secrets.RECORD_GENERATOR_URL }}" >> .env
           echo "Setting Firebase Project..."
           firebase use default
           echo "Deploying to Firebase..."
@@ -51,5 +50,4 @@ jobs:
           GITHUB_AUTH: ${{ secrets.ISSUE_CREATOR_PAT }}
           REACT_APP_GOOGLE_CLOUD_API_KEY: ${{ secrets.REACT_APP_GOOGLE_CLOUD_API_KEY }}
           REACT_APP_GOOGLE_CLOUD_API_KEY_DEV: ${{ secrets.REACT_APP_GOOGLE_CLOUD_API_KEY_DEV }}
-          RECORD_GENERATOR_URL: ${{ secrets.RECORD_GENERATOR_URL }}
           PROJECT_PATH: ./firebase-functions
