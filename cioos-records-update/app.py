@@ -201,7 +201,7 @@ if GH_USERNAME and GH_PAT:
     repo = Repo(PATH_OF_GIT_REPO)
     origin = repo.remote(name='origin')
     repoURL = origin.url
-    repoURL = repoURL.replace("https://", "https://%s:%s@" % (GH_USERNAME,GH_PAT))
+    repoURL = repoURL.replace("https://github", "https://%s:%s@github" % (GH_USERNAME,GH_PAT))
     cw = origin.config_writer
     cw.set_value('url', repoURL)
     cw.release()
