@@ -262,7 +262,6 @@ class MetadataForm extends FormClassTemplate {
   };
 
   bulkUpdateRecord = (changes) => {
-    console.log(changes);
     this.setState(({ record }) => ({
       record: { ...record, ...changes },
       saveDisabled: false,
