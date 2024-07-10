@@ -14,6 +14,7 @@ import BilingualTextInput from "../FormComponents/BilingualTextInput";
 import regions from "../../regions";
 
 import DOIInput from "../FormComponents/DOIInput";
+import DOIImport from "../FormComponents/DOIImport";
 
 import { En, Fr, I18n } from "../I18n";
 import RequiredMark from "../FormComponents/RequiredMark";
@@ -192,7 +193,14 @@ const StartTab = ({ disabled, record, updateRecord, bulkUpdateRecord, handleUpda
           </li>
         </ul>
       </Paper>
-      
+
+      <DOIImport
+        record={record}
+        handleUpdateImportDatasetIdentifier={handleUpdateRecord("importDatasetIdentifier")}
+        bulkUpdateRecord={bulkUpdateRecord}
+        disabled={disabled}
+      />
+            
       <Paper style={paperClass}>
         <QuestionText>
           <I18n>
@@ -307,7 +315,6 @@ const StartTab = ({ disabled, record, updateRecord, bulkUpdateRecord, handleUpda
         record={record}
         handleUpdateDatasetIdentifier={handleUpdateRecord("datasetIdentifier")}
         handleUpdateDoiCreationStatus={handleUpdateRecord("doiCreationStatus")}
-        bulkUpdateRecord={bulkUpdateRecord}
         disabled={disabled}
       />
       
