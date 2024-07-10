@@ -14,6 +14,7 @@ import { En, Fr, I18n } from "../I18n";
 
 import firebase from "../../firebase";
 import recordToDataCite from "../../utils/recordToDataCite";
+import dataCiteToRecord from "../../utils/dataCiteToRecord";
 import { validateDOI } from "../../utils/validate";
 
 import {
@@ -25,9 +26,10 @@ import {
 import { UserContext } from "../../providers/UserProvider";
 import performUpdateDraftDoi from "../../utils/doiUpdate";
 
-
-const DOIInput = ({ record, name, handleUpdateDatasetIdentifier, handleUpdateDoiCreationStatus, disabled }) => {
-    const { createDraftDoi, deleteDraftDoi, getDoiStatus, datacitePrefix } = useContext(UserContext);
+const DOIInput = ({ record, name, handleUpdateDatasetIdentifier, handleUpdateDoiCreationStatus, bulkUpdateRecord, disabled }) => {
+    const { createDraftDoi, deleteDraftDoi, getDoiStatus, 
+        getDoi, 
+        datacitePrefix } = useContext(UserContext);
     const { language, region, userID } = useParams();
     const doiIsValid = validateDOI(record.datasetIdentifier)
     const [doiGenerated, setDoiGenerated] = useState(false);
@@ -42,6 +44,7 @@ const DOIInput = ({ record, name, handleUpdateDatasetIdentifier, handleUpdateDoi
     const showGenerateDoi = Boolean(datacitePrefix);
     const showDoiStatus = doiIsValid && datacitePrefix && record.doiCreationStatus && record.doiCreationStatus !== ""
     const showUpdateDoi = doiIsValid && datacitePrefix && record.doiCreationStatus !== "" && record.datasetIdentifier.includes(datacitePrefix);
+    const showUpdateRecordFromDoi = doiIsValid && datacitePrefix && record.doiCreationStatus !== "" && record.datasetIdentifier.includes(datacitePrefix);
     const showDeleteDoi = doiIsValid && datacitePrefix && record.doiCreationStatus !== "" && !doiErrorFlag && record.datasetIdentifier.includes(datacitePrefix);
     const mounted = useRef(false);
 
@@ -113,7 +116,37 @@ const DOIInput = ({ record, name, handleUpdateDatasetIdentifier, handleUpdateDoi
             }, 3000);
         }
     }
+    
+    async function handleUpdateRecordFromDOI() {
+        setLoadingDoi(true);
+        // const database = getDatabase(firebase);
+        if (!record.datasetIdentifier) {
+            setLoadingDoi(false);
+            return;
+        }
+        try {
+            // const statusCode = await performUpdateDraftDoi(record, region, language, datacitePrefix)
 
+
+            const doi = record.datasetIdentifier.replace('https://doi.org/', '');
+            getDoi({ doi })
+                .then(async (result) => {
+                    const newRecord = await dataCiteToRecord(result.data);
+
+                    bulkUpdateRecord(newRecord);
+
+                    setDoiGenerated(true);
+                })
+                .finally(() => {
+                    setLoadingDoi(false);
+                });
+
+        } catch (err) {
+            setDoiErrorFlag(true);
+            throw new Error(`Error in handleGenerateDOI: ${err}`);
+        }                    
+
+    }
     async function handleDeleteDOI() {
         setLoadingDoiDelete(true);
         const database = getDatabase(firebase);
@@ -267,6 +300,27 @@ const DOIInput = ({ record, name, handleUpdateDatasetIdentifier, handleUpdateDoi
                                 </>
                             ) : (
                                 "Delete DOI"
+                            )}
+                        </div>
+                    </Button>
+                )
+            }
+
+            {
+                showUpdateRecordFromDoi && (
+                    <Button
+                        onClick={() => handleUpdateRecordFromDOI()}
+                        disabled={['not found', 'unknown'].includes(record.doiCreationStatus)}
+                        style={{ display: 'inline', marginRight: "15px" }}
+                    >
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                            {loadingDoiUpdate ? (
+                                <>
+                                    <CircularProgress size={24} style={{ marginRight: "8px" }} />
+                                    Loading...
+                                </>
+                            ) : (
+                                "Populate Record from DOI"
                             )}
                         </div>
                     </Button>

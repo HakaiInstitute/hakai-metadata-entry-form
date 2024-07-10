@@ -27,7 +27,7 @@ import SelectInput from "../FormComponents/SelectInput";
 
 const {DataCollectionSampling, ...filtereMetadataScopeCodes} = metadataScopeCodes;
 
-const StartTab = ({ disabled, record, updateRecord, handleUpdateRecord, userID }) => {
+const StartTab = ({ disabled, record, updateRecord, bulkUpdateRecord, handleUpdateRecord, userID }) => {
   const { language, region } = useParams();
   const regionInfo = regions[region];
   const [showShareRecord, setShowShareRecord] = useState(false)
@@ -307,6 +307,7 @@ const StartTab = ({ disabled, record, updateRecord, handleUpdateRecord, userID }
         record={record}
         handleUpdateDatasetIdentifier={handleUpdateRecord("datasetIdentifier")}
         handleUpdateDoiCreationStatus={handleUpdateRecord("doiCreationStatus")}
+        bulkUpdateRecord={bulkUpdateRecord}
         disabled={disabled}
       />
       

@@ -261,6 +261,14 @@ class MetadataForm extends FormClassTemplate {
     }));
   };
 
+  bulkUpdateRecord = (changes) => {
+    console.log(changes);
+    this.setState(({ record }) => ({
+      record: { ...record, ...changes },
+      saveDisabled: false,
+    }));
+  };
+
   saveUpdateContact(contact) {
     const { contactID } = contact;
     const { match } = this.props;
@@ -469,6 +477,7 @@ class MetadataForm extends FormClassTemplate {
       record,
       handleUpdateRecord: this.handleUpdateRecord,
       updateRecord: this.updateRecord,
+      bulkUpdateRecord: this.bulkUpdateRecord,
       userID:loggedInUserID,
     };
     const percentValidInt = Math.round(percentValid(record) * 100);
