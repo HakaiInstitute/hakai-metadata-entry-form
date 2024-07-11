@@ -1,5 +1,9 @@
 import { associationTypeCode } from "../isoCodeLists";
+import licenses from "./licenses";
 
+async function isoWithTimeZoneOffset(date) {    
+    return new Date(date.setMinutes(date.getMinutes() + date.getTimezoneOffset())).toISOString();
+}
 async function dataCiteToRecord(dcJson) {
     const record = {}
 
@@ -50,7 +54,7 @@ async function dataCiteToRecord(dcJson) {
         })  => ({ 
             orgName: funderName,
             orgRor: funderIdentifierType === "ROR" ? funderIdentifier : '',
-            role: "Funder",
+            role: ["funder"],
         })))
     
     // remove duplicates
@@ -61,22 +65,24 @@ async function dataCiteToRecord(dcJson) {
         )
 
     record.title = {};
-    record.title.en = dcJson.titles.filter(x => !x.lang || (x.lang && x.lang === 'en'))[0].title;
-    record.title.fr = dcJson.titles.filter(x => x.lang && x.lang === 'fr')[0].title;
+    record.title.en = dcJson.titles.filter(x => !x.lang || (x.lang && x.lang === 'en')).shift()?.title;
+    record.title.fr = dcJson.titles.filter(x => x.lang && x.lang === 'fr').shift()?.title;
 
 
     record.keywords = {};
     record.keywords.en = dcJson.subjects.filter(x => !x.lang || (x.lang && x.lang === 'en')).map(x => x.subject);
     record.keywords.fr = dcJson.subjects.filter(x => x.lang && x.lang === 'fr').map(x => x.subject);
 
-    const createdDate = dcJson.dates.filter(x => x.dateType === "Created")[0] || null;
-    record.created = createdDate;
+    const created = dcJson.dates.filter(x => x.dateType === "Created")[0] || null;
+    record.created = created && created.date ? await isoWithTimeZoneOffset(new Date(created.date)) : null
 
     const collected = dcJson.dates.filter(x => x.dateType === "Collected")[0] || null;
-    [record.dateStart, record.dateEnd] = collected.length ? collected?.split("/") : [null,null];
+    [record.dateStart, record.dateEnd] = collected && collected.date ? collected.date.split("/") : [null,null];
+    record.dateStart = record.dateStart ? await isoWithTimeZoneOffset(new Date(record.dateStart)) : null
+    record.dateEnd = record.dateEnd ? await isoWithTimeZoneOffset(new Date(record.dateEnd)) : null
 
-    record.datePublished = dcJson.dates
-        .filter(x => x.dateType in ["Submitted", "Issued", "Accepted"])
+    const published = dcJson.dates
+        .filter(x => ["Submitted", "Issued", "Accepted"].includes(x.dateType))
         .sort((a, b) => {
             if (a.date > b.date){ 
                 return 1
@@ -84,10 +90,11 @@ async function dataCiteToRecord(dcJson) {
                 return -1 
             } 
             return 0
-        })
+        }).shift();
+    record.datePublished = published && published.date ? await isoWithTimeZoneOffset(new Date(published.date)) : null;
 
-    const updated = dcJson.dates.filter(x => x.dateType === "Updated");
-    record.dateRevised = updated?.[0]
+    const updated = dcJson.dates.filter(x => x.dateType === "Updated")[0] || null;
+    record.dateRevised = updated && updated.date ? await isoWithTimeZoneOffset(new Date(updated.date)) : null
 
     record.language = dcJson.language
 
@@ -110,7 +117,9 @@ async function dataCiteToRecord(dcJson) {
 
     // dcJson.relatedItems[]
 
-    record.license = dcJson.rightsList[0].rightsIdentifier
+    const rightsID = dcJson.rightsList[0].rightsIdentifier
+    const rightsIDLowercase = rightsID.toLowerCase();
+    record.license = Object.keys(licenses).find(key => key.toLowerCase() === rightsIDLowercase) || null;
 
     record.abstract = {};
     record.abstract.en = dcJson.descriptions.filter(x => !x.lang || (x.lang && x.lang === 'en')).map(x => x.description).join('\n\n')

@@ -37,6 +37,10 @@ const DOIImport = ({ record, name, handleUpdateImportDatasetIdentifier, bulkUpda
             const doi = record.importDatasetIdentifier.replace('https://doi.org/', '');
             getDoi({ doi })
                 .then(async (result) => {
+                    if(result.data === 'not found'){
+                        setLoadingDoi(false);
+                        return;
+                    }
                     const newRecord = await dataCiteToRecord(result.data);
                     newRecord.importDatasetIdentifier = '';
                     bulkUpdateRecord(newRecord);
