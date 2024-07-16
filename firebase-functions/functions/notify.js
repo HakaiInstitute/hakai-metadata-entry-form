@@ -59,7 +59,10 @@ exports.notifyReviewer = functions.database
         console.log("Creating github issue");
         await createIssue(
           title,
-          `https://cioos-siooc.github.io/metadata-entry-form/#/${language}/${region}/${userID}/${recordID}`
+          // `https://cioos-siooc.github.io/metadata-entry-form/#/${language}/${region}/${userID}/${recordID}`
+          // hard coding the front end url as it was done this way before and I can't think of a good way of 
+          // making this dynamic. Firebase know where the request came from as this is trigered on update of a record.
+          `https://hakaiinstitute.github.io/hakai-metadata-entry-form/#/${language}/${region}/${userID}/${recordID}`, 
         );
       }
       // getting dest email by query string
