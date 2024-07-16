@@ -27,7 +27,6 @@ import {
 import { useParams } from "react-router-dom";
 import { getRecordFilename } from "../../utils/misc";
 import recordToEML from "../../utils/recordToEML";
-import recordToERDDAP from "../../utils/recordToERDDAP";
 import { recordIsValid, percentValid } from "../../utils/validate";
 import recordToDataCite from "../../utils/recordToDataCite";
 import { I18n, En, Fr } from "../I18n";
@@ -91,6 +90,7 @@ const MetadataRecordListItem = ({
       yaml: ".yaml",
       eml: "_eml.xml",
       json: ".json",
+      cff: ".cff",
     };
     setIsLoading({ downloadXML: true });
 
@@ -99,8 +99,6 @@ const MetadataRecordListItem = ({
       if (fileType === "eml") {
         const emlStr = await recordToEML(record);
         data = [emlStr];
-      } else if (fileType === "erddap") {
-        data = [recordToERDDAP(record)];
       } else if (fileType === "json") {
         data = await [JSON.stringify(recordToDataCite( record, language, region, datacitePrefix ), null, 2)];
       } else {
@@ -386,6 +384,15 @@ const MetadataRecordListItem = ({
                   }}
                 >
                   DATACITE JSON
+                </MenuItem>
+                <MenuItem
+                  key="json"
+                  onClick={() => {
+                    handleDownloadRecord("cff");
+                    handleClose();
+                  }}
+                >
+                  citation.cff
                 </MenuItem>
               </Menu>
             </span>
