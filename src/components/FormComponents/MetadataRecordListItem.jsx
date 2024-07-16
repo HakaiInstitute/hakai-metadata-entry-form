@@ -91,6 +91,7 @@ const MetadataRecordListItem = ({
       yaml: ".yaml",
       eml: "_eml.xml",
       json: ".json",
+      cff: ".cff",
     };
     setIsLoading({ downloadXML: true });
 
@@ -386,6 +387,15 @@ const MetadataRecordListItem = ({
                   }}
                 >
                   DATACITE JSON
+                </MenuItem>
+                <MenuItem
+                  key="json"
+                  onClick={() => {
+                    handleDownloadRecord("cff");
+                    handleClose();
+                  }}
+                >
+                  citation.cff
                 </MenuItem>
               </Menu>
             </span>
