@@ -42,8 +42,6 @@ class UserProvider extends FormClassTemplate {
           });
         });
 
-
-        // should be replaced with getDatacitePrefix but can't as this function is not async
         const functions = getFunctions();
         const getDatacitePrefix = httpsCallable(functions, "getDatacitePrefix");
         getDatacitePrefix(region)
@@ -107,6 +105,7 @@ class UserProvider extends FormClassTemplate {
     const updateDraftDoi = httpsCallable(functions, "updateDraftDoi");
     const deleteDraftDoi = httpsCallable(functions, "deleteDraftDoi");
     const getDoiStatus = httpsCallable(functions, "getDoiStatus");
+    const getDoi = httpsCallable(functions, "getDoi");
     const checkURLActive = httpsCallable(functions, "checkURLActive");
     const getCredentialsStored = httpsCallable(functions, "getCredentialsStored");
     const getDatacitePrefix = httpsCallable(functions, "getDatacitePrefix");
@@ -122,6 +121,7 @@ class UserProvider extends FormClassTemplate {
           updateDraftDoi,
           deleteDraftDoi,
           getDoiStatus,
+          getDoi,
           checkURLActive,
           getCredentialsStored,
           getDatacitePrefix,

@@ -25,7 +25,6 @@ import {
 import { UserContext } from "../../providers/UserProvider";
 import performUpdateDraftDoi from "../../utils/doiUpdate";
 
-
 const DOIInput = ({ record, name, handleUpdateDatasetIdentifier, handleUpdateDoiCreationStatus, disabled }) => {
     const { createDraftDoi, deleteDraftDoi, getDoiStatus, datacitePrefix } = useContext(UserContext);
     const { language, region, userID } = useParams();
@@ -112,7 +111,7 @@ const DOIInput = ({ record, name, handleUpdateDatasetIdentifier, handleUpdateDoi
                 setDoiUpdateFlag(false);
             }, 3000);
         }
-    }
+    }  
 
     async function handleDeleteDOI() {
         setLoadingDoiDelete(true);
@@ -272,7 +271,6 @@ const DOIInput = ({ record, name, handleUpdateDatasetIdentifier, handleUpdateDoi
                     </Button>
                 )
             }
-
             {
                 doiErrorFlag && (
                     <span>

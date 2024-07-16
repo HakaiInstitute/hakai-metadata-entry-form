@@ -39,7 +39,7 @@ jest.mock('firebase/database', () => ({
   getDatabase: jest.fn(() => mockGetDatabase),
 }));
 
-jest.mock('firebase/app', () => ({
+jest.mock('../firebase', () => ({
   initializeApp: jest.fn(),
 }));
 
