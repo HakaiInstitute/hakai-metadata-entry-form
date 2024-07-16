@@ -14,6 +14,7 @@ import BilingualTextInput from "../FormComponents/BilingualTextInput";
 import regions from "../../regions";
 
 import DOIInput from "../FormComponents/DOIInput";
+import DOIImport from "../FormComponents/DOIImport";
 
 import { En, Fr, I18n } from "../I18n";
 import RequiredMark from "../FormComponents/RequiredMark";
@@ -27,7 +28,7 @@ import SelectInput from "../FormComponents/SelectInput";
 
 const {DataCollectionSampling, ...filtereMetadataScopeCodes} = metadataScopeCodes;
 
-const StartTab = ({ disabled, record, updateRecord, handleUpdateRecord, userID }) => {
+const StartTab = ({ disabled, record, updateRecord, bulkUpdateRecord, handleUpdateRecord, userID }) => {
   const { language, region } = useParams();
   const regionInfo = regions[region];
   const [showShareRecord, setShowShareRecord] = useState(false)
@@ -192,7 +193,14 @@ const StartTab = ({ disabled, record, updateRecord, handleUpdateRecord, userID }
           </li>
         </ul>
       </Paper>
-      
+
+      <DOIImport
+        record={record}
+        handleUpdateImportDatasetIdentifier={handleUpdateRecord("importDatasetIdentifier")}
+        bulkUpdateRecord={bulkUpdateRecord}
+        disabled={disabled}
+      />
+            
       <Paper style={paperClass}>
         <QuestionText>
           <I18n>

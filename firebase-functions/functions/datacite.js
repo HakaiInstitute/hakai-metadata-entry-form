@@ -237,6 +237,45 @@ exports.getDoiStatus = functions.https.onCall(async (data) => {
 
 });
 
+
+exports.getDoi = functions.https.onCall(async (data) => {
+
+  functions.logger.log(data);
+
+  try {
+    const url = `${baseUrl}${data.doi}/`;
+    const response = await axios.get(url);
+    return response.data.data.attributes;
+  } catch (err) {
+    // if the error is a 401, throw a HttpsError with the code 'unauthenticated'
+    if (err.response && err.response.status === 401) {
+      throw new functions.https.HttpsError(
+        'unauthenticated',
+        'Error from DataCite API: Unauthorized. Please check your API credentials.'
+      );
+    }
+    // if the error is a 404, throw a HttpsError with the code 'not-found'
+    if (err.response && err.response.status === 404) {
+      return 'not found'
+    }
+    // initialize a default error message
+    let errMessage = 'An error occurred while fetching the DOI.';
+
+    // if there is an error response from DataCite, include the status and statusText from the API error
+    // if the error doesn't have a response, include the error message
+    if (err.response) {
+      errMessage = `from DataCite API: ${err.response.status} - ${err.response.statusText}`;
+    } else if (err.message) {
+      errMessage = err.message;
+    }
+
+    // throw a default HttpsError with the code 'unknown' and the error message
+    throw new functions.https.HttpsError('unknown', errMessage);
+  }
+
+});
+
+
 // helper function to get the datacite credentials from the database so they are not sent to the client
 exports.getCredentialsStored = functions.https.onCall(async (data) => {
   try {
@@ -259,6 +298,8 @@ exports.getCredentialsStored = functions.https.onCall(async (data) => {
 exports.getDatacitePrefix = functions.https.onCall(async (region) => {
   try {
     const prefix = (await admin.database().ref('admin').child(region).child("dataciteCredentials").child("prefix").once("value")).val();
+    console.log(region);
+    console.log(prefix);
     return prefix;
   } catch (error) {
     throw new Error(`Error fetching Datacite Prefix for region ${region}: ${error}`);

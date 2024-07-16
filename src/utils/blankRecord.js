@@ -30,6 +30,7 @@ const blankRecord = {
   category: "",
   verticalExtentDirection: "",
   datasetIdentifier: "",
+  importDatasetIdentifier: "",
   doiCreationStatus: "",
   noPlatform: false,
   filename: "",
