@@ -11,6 +11,7 @@ from firebase_to_xml.record_json_to_yaml import record_json_to_yaml
 from flask import Flask, jsonify, make_response, request
 from metadata_xml.template_functions import metadata_to_xml
 from hakai_metadata_conversion.citation_cff import citation_cff
+from hakai_metadata_conversion.erddap import global_attributes
 
 import sentry_sdk
 
@@ -124,6 +125,7 @@ def recordUpdate():
     xml_filename = get_complete_path(status, region, basename,'.xml')
     yaml_filename = get_complete_path(status, region, basename,'.yaml')
     cff_filename = get_complete_path(status, region, basename, '.cff')
+    erddap_filename = get_complete_path(status, region, basename, '.erddap')
 
     git_pull()
 
@@ -144,6 +146,10 @@ def recordUpdate():
             record, 
             record_type=recordFromFB.get('metadataScope')
             )
+        erddap_xml = global_attributes(
+            record,
+            output='xml'
+        )
 
         # create path if doesn't exist
         print(xml_filename)
@@ -161,9 +167,14 @@ def recordUpdate():
             g.write(cff_yaml)
             print("wrote", cff_filename)
 
+        with open(erddap_filename, "w") as g:
+            g.write(erddap_xml)
+            print("wrote", erddap_filename)
+
         git_push([xml_filename.replace('xml//', ''),
                  yaml_filename.replace('xml//', ''),
-                 cff_filename.replace('xml//', ''),])
+                 cff_filename.replace('xml//', ''),
+                 erddap_filename.replace('xml//', ''),])
         url = waf_url + basename
         
         # returned value doesn't do anything
@@ -207,7 +218,7 @@ def recordToCFF():
 
     # basename = get_filename(recordFromFB)
     try:
-        cff = cff_yaml = citation_cff(
+        cff = citation_cff(
             record,
             record_type=recordFromFB.get('metadataScope')
         )
@@ -216,6 +227,23 @@ def recordToCFF():
         print(traceback.format_exc())
         return make_response(jsonify(error="Error creating cff"), 500)
 
+
+@app.route("/recordToERDDAP", methods=["POST"])
+def recordToERDDAP():
+    recordFromFB = request.get_json()
+
+    record = record_json_to_yaml(recordFromFB)
+
+    # basename = get_filename(recordFromFB)
+    try:
+        erddap_xml = global_attributes(
+            record,
+            output='xml'
+        )
+        return jsonify(message={"xml": erddap_xml})
+    except Exception:
+        print(traceback.format_exc())
+        return make_response(jsonify(error="Error creating erddap snippet"), 500)
 
 @app.errorhandler(404)
 def resource_not_found(e):
