@@ -60,8 +60,6 @@ const Lineage = ({
     }, {});
 
 
-
-
   function addLineage() {
     updateLineage(history.concat(deepCopy(emptyLineage)));
     setActiveLineage(history.length);
@@ -137,16 +135,24 @@ const Lineage = ({
   if (!deepEquals(currentLineage, history)) {
     setCurrentLineage(history);
   }
-  const lineageStep = history.length > 0 && history[activeLineage];
-
-  if (lineageStep && !lineageStep.scope){
-    lineageStep.scope = metadataScope;
-  }
 
   if (typeof history === 'string' || history instanceof String) {
     // eslint-disable-next-line no-param-reassign
     history = []
-    
+  } else if (typeof history === 'object' && !Array.isArray(history)) {
+    const oldHistory = deepCopy(history)
+    // eslint-disable-next-line no-param-reassign
+    history = []
+    // eslint-disable-next-line no-param-reassign
+    history[0] = deepCopy(emptyLineage)
+    // eslint-disable-next-line no-param-reassign
+    history[0].statement = oldHistory;
+  }
+
+  const lineageStep = history.length > 0 && history[activeLineage];
+
+  if (lineageStep && !lineageStep.scope){
+    lineageStep.scope = metadataScope;
   }
 
   return (
