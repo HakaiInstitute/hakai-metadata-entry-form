@@ -171,10 +171,10 @@ def recordUpdate():
             g.write(erddap_xml)
             print("wrote", erddap_filename)
 
-        git_push([xml_filename.replace('xml//', ''),
-                 yaml_filename.replace('xml//', ''),
-                 cff_filename.replace('xml//', ''),
-                 erddap_filename.replace('xml//', ''),])
+        git_push([xml_filename.replace('xml/', ''),
+                 yaml_filename.replace('xml/', ''),
+                 cff_filename.replace('xml/', ''),
+                 erddap_filename.replace('xml/', ''),])
         url = waf_url + basename
         
         # returned value doesn't do anything
