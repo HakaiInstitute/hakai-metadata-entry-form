@@ -179,8 +179,9 @@ def recordUpdate():
         
         # returned value doesn't do anything
         return jsonify(message=url)
-    except Exception:
+    except Exception as err:
         print(traceback.format_exc())
+        sentry_sdk.capture_exception(err)
         return make_response(jsonify(error="Error creating xml"), 500)
 
 
@@ -223,8 +224,9 @@ def recordToCFF():
             record_type=recordFromFB.get('metadataScope')
         )
         return jsonify(message={"record": cff})
-    except Exception:
+    except Exception as err:
         print(traceback.format_exc())
+        sentry_sdk.capture_exception(err)
         return make_response(jsonify(error="Error creating cff"), 500)
 
 
@@ -241,8 +243,9 @@ def recordToERDDAP():
             output='xml'
         )
         return jsonify(message={"xml": erddap_xml})
-    except Exception:
+    except Exception as err:
         print(traceback.format_exc())
+        sentry_sdk.capture_exception(err)
         return make_response(jsonify(error="Error creating erddap snippet"), 500)
 
 @app.errorhandler(404)
