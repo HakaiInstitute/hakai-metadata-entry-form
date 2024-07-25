@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import {
   Button,
   InputAdornment,
@@ -26,6 +26,7 @@ const BilingualTextInput = ({
   error,
   translationButonDisabled = false,
 }) => {
+  const mounted = useRef(false);
   const { translate } = useContext(UserContext);
   const [awaitingTranslation, setAwaitingTranslation] = useState(false);
 
@@ -79,6 +80,7 @@ const BilingualTextInput = ({
 
   // Ensure translations field exists on component mount/load
   useEffect(() => {
+    mounted.current = true
     if (value && !value.translations) {
       const hasTranslations = value.en && value.fr;
       if (hasTranslations) {
@@ -95,6 +97,9 @@ const BilingualTextInput = ({
         onChange({ target: { name, value: updatedValue } });
       }
     }
+    return () => {
+      mounted.current = false;
+    };
   }, [name, onChange, value, alternateLanguage]);
 
   return (

@@ -65,18 +65,17 @@ const ContactEditor = ({
       newInputValue.startsWith("http") &&
       !newInputValue.includes("ror.org")
     ) {
-       if (mounted.current) setRorSearchActive(false);
+       setRorSearchActive(false);
     } else {
       fetch(`https://api.ror.org/organizations?query="${newInputValue}"`)
         .then((response) => response.json())
         .then((response) => {
-          if (mounted.current){
-            setRorOptions(response.items)}
-          if (response.number_of_results === 1){
-            updateContactRor(response.items[0]);
-          }
+            setRorOptions(response.items)
+            if (response.number_of_results === 1){
+              updateContactRor(response.items[0]);
+            }
         })
-        .then(() => {if (mounted.current) setRorSearchActive(false)});
+        .then(() => {setRorSearchActive(false)});
     }
   }
 
@@ -94,13 +93,13 @@ const ContactEditor = ({
   }, [debouncedRorInputValue]);
 
   return (
-    <Grid container direction="column" spacing={2}>
-      <Grid item xs>
+    <Grid container direction="column">
+      <Grid item xs style={{ margin: "10px" }}>
         <Typography variant="h6">
           {ContactTitle(value)}
         </Typography>
       </Grid>
-      <Grid item xs>
+      <Grid item xs style={{ margin: "10px" }}>
         {showRolePicker && (
           <RolePicker
             value={value}
@@ -122,149 +121,153 @@ const ContactEditor = ({
                 <Fr>Identification de l'organisation</Fr>
               </I18n>
             </QuestionText>
-          </Grid>
-          <Grid item xs style={{ marginleft: "10px", height: "33px" }}>
-            {rorSearchActive ? (
-              <CircularProgress size={20} />
-            ) : (
-              <div style={{ height: "33px" }} />
-            )}
-          </Grid>
-          <Grid item xs style={{ marginleft: "10px" }}>
-            <Autocomplete
-              inputValue={rorInputValue}
-              onInputChange={(e, newInputValue) => {
-                setRorInputValue(newInputValue);
-                if (newInputValue === "") {
-                  setRorSearchActive(false);
-                } else {
-                  setRorSearchActive(true);
-                }
-              }}
-              disabled={disabled}
-              onChange={(e, organization) => {
-                if (organization !== null) {
-                  fetch(`https://api.ror.org/organizations/${organization.id}`)
-                    .then((response) => response.json())
-                    .then((response) => {
-                      if (!response.errors) {
-                        updateContactRor(response);
-                      } // todo: do some error handling here if search fails?
-                    })
-                    .then(() => setRorSearchActive(false))
-                    .then(() => setRorInputValue(""));
-                }
-              }}
-              freeSolo
-              filterOptions={(x) => x}
-              getOptionLabel={(e) => e.name}
-              options={rorOptions}
-              fullWidth
-              renderInput={(params) => (
-                <TextField
-                  // eslint-disable-next-line react/jsx-props-no-spreading
-                  {...params}
-                  label={
-                    <I18n
-                      en="Type to search Research Organization Registry (ROR)"
-                      fr="Tapez pour rechercher le registre des organismes de recherche (ROR)
-"
+            <Grid container direction="column" spacing={1}>
+              <Grid item xs>
+                <Autocomplete
+                  inputValue={rorInputValue}
+                  onInputChange={(e, newInputValue) => {
+                    setRorInputValue(newInputValue);
+                    if (newInputValue === "") {
+                      setRorSearchActive(false);
+                    } else {
+                      setRorSearchActive(true);
+                    }
+                  }}
+                  disabled={disabled}
+                  onChange={(e, organization) => {
+                    if (organization !== null) {
+                      fetch(`https://api.ror.org/organizations/${organization.id}`)
+                        .then((response) => response.json())
+                        .then((response) => {
+                          if (!response.errors) {
+                            updateContactRor(response);
+                          } // todo: do some error handling here if search fails?
+                        })
+                        .then(() => setRorSearchActive(false))
+                        .then(() => setRorInputValue(""));
+                    }
+                  }}
+                  freeSolo
+                  filterOptions={(x) => x}
+                  getOptionLabel={(e) => e.name}
+                  options={rorOptions}
+                  fullWidth
+                  renderInput={(params) => (
+                    <TextField
+                      // eslint-disable-next-line react/jsx-props-no-spreading
+                      {...params}
+                      label={
+                        <I18n
+                          en="Type to search Research Organization Registry (ROR)"
+                          fr="Tapez pour rechercher le registre des organismes de recherche (ROR)
+    "
+                        />
+                      }
                     />
-                  }
+                  )}
                 />
-              )}
-            />
-          </Grid>
-          <Grid item xs style={{ marginleft: "10px" }}>
-            <TextField
-              label={<I18n active en="ROR URL" fr="URL ROR" />}
-              InputLabelProps={{ shrink: value.orgRor !== "" }}
-              value={value.orgRor}
-              disabled
-              fullWidth
-              InputProps={{
-                endAdornment: value.orgRor && (
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={() => {
-                        handleClear("orgRor");
-                      }}
-                    >
-                      <Clear />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              // sx={{m: 2, "&.Mui-focused .MuiIconButton-root": {color: 'primary.main'}}}
-            />
-          </Grid>
-          <Grid item xs style={{ marginleft: "10px" }}>
-            <TextField
-              label={<I18n en="Organization name" fr="Nom de l'organisation" />}
-              value={value.orgName}
-              onChange={updateContactEvent("orgName")}
-              disabled={value.orgRor !== "" || disabled}
-              fullWidth
-            />
-          </Grid>
-          <Grid item xs>
-            <TextField
-              helperText={
-                !orgURLValid && <I18n en="Invalid URL" fr="URL non valide" />
-              }
-              error={!orgURLValid}
-              label={<I18n en="URL" fr="URL" />}
-              value={value.orgURL}
-              onChange={updateContactEvent("orgURL")}
-              disabled={value.orgRor !== "" || disabled}
-              fullWidth
-            />
-          </Grid>
-          <Grid item xs>
-            <TextField
-              label={<I18n en="Address" fr="Adresse" />}
-              value={value.orgAdress}
-              onChange={updateContactEvent("orgAdress")}
-              disabled={disabled}
-              fullWidth
-            />
-          </Grid>
-          <Grid item xs>
-            <TextField
-              label={<I18n en="City" fr="Ville" />}
-              value={value.orgCity}
-              onChange={updateContactEvent("orgCity")}
-              disabled={value.orgRor !== "" || disabled}
-              fullWidth
-            />
-          </Grid>
-          <Grid item xs>
-            <TextField
-              label={<I18n en="Country" fr="Pays" />}
-              value={value.orgCountry}
-              onChange={updateContactEvent("orgCountry")}
-              disabled={value.orgRor !== "" || disabled}
-              fullWidth
-            />
-          </Grid>
-          <Grid item xs>
-            <TextField
-              helperText={
-                !orgEmailValid && (
-                  <I18n en="Invalid email" fr="E-mail non valide" />
-                )
-              }
-              error={!orgEmailValid}
-              label={<I18n en="Email" fr="Courriel" />}
-              value={value.orgEmail}
-              onChange={updateContactEvent("orgEmail")}
-              fullWidth
-              disabled={disabled}
-            />{" "}
+                {rorSearchActive ? (
+                  <CircularProgress size={20} style={{
+                     position: 'relative',
+                    top: -35,
+                    left: 30,
+                    zIndex: 1,
+                  }} />
+                ) : ("")}
+              </Grid>
+              <Grid item xs>
+                <TextField
+                  label={<I18n active en="ROR URL" fr="URL ROR" />}
+                  InputLabelProps={{ shrink: value.orgRor !== "" }}
+                  value={value.orgRor}
+                  disabled
+                  fullWidth
+                  InputProps={{
+                    endAdornment: value.orgRor && (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={() => {
+                            handleClear("orgRor");
+                          }}
+                        >
+                          <Clear />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                  // sx={{m: 2, "&.Mui-focused .MuiIconButton-root": {color: 'primary.main'}}}
+                />
+              </Grid>
+              <Grid item xs>
+                <TextField
+                  label={<I18n en="Organization name" fr="Nom de l'organisation" />}
+                  value={value.orgName}
+                  onChange={updateContactEvent("orgName")}
+                  disabled={value.orgRor !== "" || disabled}
+                  inputProps={{'data-lpignore' : true}}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs>
+                <TextField
+                  helperText={
+                    !orgURLValid && <I18n en="Invalid URL" fr="URL non valide" />
+                  }
+                  error={!orgURLValid}
+                  label={<I18n en="URL" fr="URL" />}
+                  value={value.orgURL}
+                  onChange={updateContactEvent("orgURL")}
+                  disabled={value.orgRor !== "" || disabled}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs>
+                <TextField
+                  label={<I18n en="Address" fr="Adresse" />}
+                  value={value.orgAdress}
+                  onChange={updateContactEvent("orgAdress")}
+                  disabled={disabled}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs>
+                <TextField
+                  label={<I18n en="City" fr="Ville" />}
+                  value={value.orgCity}
+                  onChange={updateContactEvent("orgCity")}
+                  disabled={value.orgRor !== "" || disabled}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs>
+                <TextField
+                  label={<I18n en="Country" fr="Pays" />}
+                  value={value.orgCountry}
+                  onChange={updateContactEvent("orgCountry")}
+                  disabled={value.orgRor !== "" || disabled}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs>
+                <TextField
+                  helperText={
+                    !orgEmailValid && (
+                      <I18n en="Invalid email" fr="E-mail non valide" />
+                    )
+                  }
+                  error={!orgEmailValid}
+                  label={<I18n en="Email" fr="Courriel" />}
+                  value={value.orgEmail}
+                  onChange={updateContactEvent("orgEmail")}
+                  fullWidth
+                  disabled={disabled}
+                />{" "}
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
       </Grid>
-      <Grid item xs>
+      <Grid item xs style={{ margin: "10px" }}>
         {/* Individual */}
         <Typography>
           <I18n>

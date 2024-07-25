@@ -102,7 +102,8 @@ const PlatformTab = ({
             />
           </Grid>
 
-          <Grid item xs style={paperClass}>
+          <Grid container direction="column" spacing={3} style={{marginLeft:"10px"}}>
+            <Grid item xs>
             {!noPlatform ? (
               <>
                 <Platform
@@ -126,7 +127,8 @@ const PlatformTab = ({
                 </I18n>
               </QuestionText>
             )}
-
+            </Grid>
+            <Grid item xs>
             <Instruments
               instruments={record.instruments}
               updateInstruments={updateRecord("instruments")}
@@ -137,6 +139,7 @@ const PlatformTab = ({
               noPlatform={noPlatform}
               platformList={record.platforms}
             />
+            </Grid>
           </Grid>
         </Grid>
       </Paper>

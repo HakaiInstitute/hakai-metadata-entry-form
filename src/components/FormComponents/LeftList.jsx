@@ -14,7 +14,6 @@ import {Container, Draggable} from "react-smooth-dnd";
 import {Delete, DragHandle, FileCopy, Save} from "@material-ui/icons";
 import arrayMove from "array-move";
 import {deepCopy, deepEquals} from "../../utils/misc";
-import {paperClass} from "./QuestionStyles";
 import {En, Fr, I18n} from "../I18n";
 import SelectInput from "./SelectInput";
 
@@ -93,7 +92,7 @@ const LeftList = ({
   }
 
   return (
-      <Paper style={paperClass}>
+      <Paper style={{padding: "10px", marginRight:"10px"}}>
       <Grid container direction="column" justifyContent="flex-start">
         <Grid item xs style={{ margin: "10px" }}>
           <Typography>

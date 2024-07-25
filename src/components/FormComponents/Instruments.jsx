@@ -22,7 +22,6 @@ const Instruments = ({
   updateInstruments,
   instruments = [],
   disabled,
-  paperClass,
   saveUpdateInstrument,
   userInstruments,
   platformList,
@@ -77,7 +76,7 @@ const Instruments = ({
       <Grid item xs>
         <Grid container direction="column">
           {instrument && (
-            <Paper style={paperClass}>
+            <Paper style={{ marginLeft: "10px", padding: "10px" }}>
               <Grid container direction="column" spacing={2}>
                 <Grid item xs>
                   <I18n>

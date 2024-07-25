@@ -87,8 +87,9 @@ const ContactTab = ({
     record.contacts?.some((c) => c.inCitation);
 
   const contact = contacts[activeContact];
+
   return (
-    <Grid container spacing={3}>
+    <Grid item xs >
       <Paper style={paperClass}>
         <Grid item xs>
           <QuestionText>
@@ -157,7 +158,11 @@ const ContactTab = ({
         </Paper>
       )}
 
-      <Grid container direction="row" style={{ marginLeft: "5px" }}>
+      <Grid container direction="row" 
+        style={{
+          margin: "20px",
+          width: "90%",
+        }}>
         <Grid item xs={5}>
           <LeftList
             items={contacts}
@@ -181,7 +186,7 @@ const ContactTab = ({
         {contact && (
           <Grid item xs>
             <Grid container direction="column">
-              <Paper style={paperClass}>
+              <Paper style={{marginLeft:"10px", padding:"10px"}}>
                 <Grid container direction="column" spacing={3}>
                   <Grid item xs>
                     <EditContact

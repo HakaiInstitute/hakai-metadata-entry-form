@@ -66,7 +66,7 @@ const Platform = ({
       <Grid item xs>
         <Grid container direction="column">
         { platform && (
-            <Paper style={paperClass}>
+            <Paper style={{ marginLeft: "10px", padding: "10px" }}>
               <Grid item xs style={paperClass}>
                 <QuestionText>
                   <I18n>
