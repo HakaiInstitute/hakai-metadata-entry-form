@@ -11,7 +11,8 @@ if (process.env.NODE_ENV === "production")
   Sentry.init({
     dsn:
       "https://8fd4b6885cc447c0b11aa0cb3009b0e3@o56764.ingest.sentry.io/5493983",
-    integrations: [new Integrations.BrowserTracing(),
+    integrations: [
+      Sentry.browserTracingIntegration(),
       Sentry.replayIntegration({
         // Additional SDK configuration goes in here, for example:
         maskAllText: false,
