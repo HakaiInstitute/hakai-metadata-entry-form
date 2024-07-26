@@ -35,12 +35,11 @@ class UserProvider extends FormClassTemplate {
         const { displayName, email, uid } = userAuth;
         this.setState({ user: userAuth, authIsLoading: false, loggedIn: true });
 
-        Sentry.configureScope((scope) => {
-          scope.setUser({
+        // set user for the sentry isolation scope
+        Sentry.setUser({
             email,
             username: email,
           });
-        });
 
         const functions = getFunctions();
         const getDatacitePrefix = httpsCallable(functions, "getDatacitePrefix");
