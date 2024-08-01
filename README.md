@@ -3,7 +3,7 @@
 [![Run Build and Tests](https://github.com/hakaiinstitute/hakai-metadata-entry-form/actions/workflows/run-build-tests.yaml/badge.svg)](https://github.com/hakaiinstitute/hakai-metadata-entry-form/actions/workflows/run-build-tests.yaml)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
-CIOOS Metadata entry form
+Hakai Metadata entry form
 
 ## System Architecture
 
@@ -27,7 +27,7 @@ This will start a hot-reloading dev server. Click on the link that it outputs to
 
 ## Monitoring
 
-Monitoring of production site availability is done via the [cioos-upptime](https://github.com/cioos-siooc/cwatch-upptime) and notices are posted to the CIOOS cwatch-upptime slack channel. Error collection is performed by sentry and reported in the [hakai-metadata-entry-form](https://hakai-institute.sentry.io/projects/hakai-metadata-entry-form/) project.
+Monitoring of production site availability is done via the [hakai-upptime](https://github.com/HakaiInstitute/upptime-trial) and notices are posted to the hakai-upptime slack channel. Error collection is performed by sentry and reported in the [hakai-metadata-entry-form](https://hakai-institute.sentry.io/projects/hakai-metadata-entry-form/) project.
 
 ### Running the Firebase emulator
 
