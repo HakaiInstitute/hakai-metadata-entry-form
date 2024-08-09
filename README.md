@@ -1,11 +1,39 @@
-# metadata-entry-form
+Hakai Metadata entry form
 
 [![Run Build and Tests](https://github.com/hakaiinstitute/hakai-metadata-entry-form/actions/workflows/run-build-tests.yaml/badge.svg)](https://github.com/hakaiinstitute/hakai-metadata-entry-form/actions/workflows/run-build-tests.yaml)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
-Hakai Metadata entry form
+- [System Architecture](#system-architecture)
+- [The URL where this code is deployed](#the-url-where-this-code-is-deployed)
+- [Monitoring](#monitoring)
+- [How to install this code](#how-to-install-this-code)
+  - [Installation Node packages](#installation-node-packages)
+  - [Running development mode](#running-development-mode)
+    - [Running the Firebase emulator](#running-the-firebase-emulator)
+      - [Local Install Alternative](#local-install-alternative)
+- [How to run/deploy this code](#how-to-rundeploy-this-code)
+  - [Deploy to production site at GitHub pages](#deploy-to-production-site-at-github-pages)
+  - [Deploy to dev preview sites](#deploy-to-dev-preview-sites)
+  - [Deployment and Configuration of Firebase Functions](#deployment-and-configuration-of-firebase-functions)
+    - [Automated and Manual Deployment with GitHub Actions](#automated-and-manual-deployment-with-github-actions)
+      - [Workflow Features](#workflow-features)
+      - [Manual Deployment Steps](#manual-deployment-steps)
+    - [Deploying to Development Project](#deploying-to-development-project)
+      - [GitHub Secrets and .env File Creation](#github-secrets-and-env-file-creation)
+    - [Using Parameterized Configuration in Firebase Functions](#using-parameterized-configuration-in-firebase-functions)
+      - [Deployment Considerations with Parameters](#deployment-considerations-with-parameters)
+    - [Security Considerations](#security-considerations)
+  - [Deploying Firebase Realtime Database Security Rules](#deploying-firebase-realtime-database-security-rules)
+    - [Overview](#overview)
+    - [Setting Up Rules](#setting-up-rules)
+    - [Define targets](#define-targets)
+    - [Configure firebase.json](#configure-firebasejson)
+    - [Deployment](#deployment)
+      - [Important Considerations](#important-considerations)
+  - [Hosting on github and Authentication](#hosting-on-github-and-authentication)
 
-## System Architecture
+
+# System Architecture
 
 Below is the system architecture diagram which provides an overview of the data flow and interaction between components within the application:
 
@@ -13,7 +41,18 @@ Below is the system architecture diagram which provides an overview of the data 
 
 For a more interactive and detailed view, see the [Lucidchart Diagram](https://lucid.app/lucidchart/d9fd139b-9705-45c0-b264-930e94dbd88d/edit?viewport_loc=-881%2C-64%2C10027%2C5945%2C0_0&invitationId=inv_80257c7b-9a79-433a-aa33-e95d87793fa4).
 
-## Installation
+
+# The URL where this code is deployed
+- https://hakaiinstitute.github.io/hakai-metadata-entry-form/#/en/region-select
+
+
+# Monitoring
+
+Monitoring of production site availability is done via the [hakai-upptime](https://github.com/HakaiInstitute/upptime-trial) and notices are posted to the hakai-upptime slack channel. Error collection is performed by sentry and reported in the [hakai-metadata-entry-form](https://hakai-institute.sentry.io/projects/hakai-metadata-entry-form/) project.
+
+# How to install this code
+
+## Installation Node packages
 
 1. Install [Node](https://nodejs.org/en/download/)
 
@@ -25,10 +64,6 @@ For a more interactive and detailed view, see the [Lucidchart Diagram](https://l
 
 This will start a hot-reloading dev server. Click on the link that it outputs to open in your browser.
 
-## Monitoring
-
-Monitoring of production site availability is done via the [hakai-upptime](https://github.com/HakaiInstitute/upptime-trial) and notices are posted to the hakai-upptime slack channel. Error collection is performed by sentry and reported in the [hakai-metadata-entry-form](https://hakai-institute.sentry.io/projects/hakai-metadata-entry-form/) project.
-
 ### Running the Firebase emulator
 
 #### Local Install Alternative
@@ -38,6 +73,9 @@ Install firebase CLI [as described here](https://firebase.google.com/docs/emulat
 Run `firebase emulators:start` from the `firebase-functions/functions` directory.
 Redirect function calls to this emulator by uncommenting the call to `connectFunctionsEmulator` in [src/firebase.js](src/firebase.js).
 
+
+# How to run/deploy this code
+push code changes to the github repo. The github actions will take care of updating the github pages with the new running code.
 
 ## Deploy to production site at GitHub pages
 
