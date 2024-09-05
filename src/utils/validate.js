@@ -347,6 +347,9 @@ export const warnings = {
     validation: async (val) => {
       const processedVal = await Promise.all(
         val.map(async (dist) => {
+          if (!dist.url){
+            return { ...dist, status: false };
+          }
           const res = await checkURLActive(dist.url);
           return {...dist, status:res.data};
         })
