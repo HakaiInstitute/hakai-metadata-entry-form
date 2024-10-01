@@ -56,6 +56,13 @@
     "definition_fr": "Grand sac en polyéthylène contenant un volume d'eau en suspension dans l'environnement naturel afin qu'il partage les conditions physiques ambiantes telles que la température et les niveaux de lumière, mais qui est isolé chimiquement pour permettre des expériences telles que la fertilisation."
   },
   {
+    "identifier": "99",
+    "label_en": "mesocosm tank",
+    "label_fr": "réservoir de mésocosme",
+    "definition_en": "An indoor or outdoor tank containing water, used to house an experimental system. Instruments attached to the tank are used to measure and control conditions to help evaluate how organisms or communities react to controlled environmental changes.",
+    "definition_fr": "Réservoir intérieur ou extérieur contenant de l'eau, utilisé pour abriter un système expérimental. Les instruments fixés au réservoir sont utilisés pour mesurer et contrôler les conditions afin d'aider à évaluer la façon dont les organismes ou les communautés réagissent aux changements environnementaux contrôlés."
+  },
+  {
     "identifier": "34",
     "label_en": "vessel at fixed position",
     "label_fr": "navire en position fixe",
