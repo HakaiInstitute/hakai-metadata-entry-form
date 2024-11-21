@@ -35,11 +35,15 @@ export function generateCitation(record, language, format) {
           (contact) =>
             // citation-js crashes sometimes with single letter input for a name
             contact.inCitation &&
-            ((contact.givenNames?.length > 1 && contact.lastName?.length > 1) ||
+            ((contact.givenNames?.length !== 1 && contact.lastName?.length > 1) ||
               contact.orgName?.length > 1)
         )
 
         .map((contact) => {
+          if (contact.givenNames?.length === 0 && contact.lastName?.length > 1)
+            return {
+              family: contact.lastName,
+            };
           if (contact.givenNames?.length > 1 && contact.lastName?.length > 1)
             return {
               given: contact.givenNames,
