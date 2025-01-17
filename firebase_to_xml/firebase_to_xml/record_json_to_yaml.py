@@ -87,7 +87,10 @@ def format_taxa(taxa):
                 t.get("genus"), 
                 t.get("species")
             ))).split(",")
-        
+    
+    # remove duplicates
+    taxaKeywords = list(set(taxaKeywords))
+
     return taxaKeywords
 
 
