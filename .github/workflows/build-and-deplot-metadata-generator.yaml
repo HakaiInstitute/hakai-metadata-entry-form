@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - "cioos-records-update/**"
+      - "firebase_to_xml/**"
   workflow_dispatch:
 
 
