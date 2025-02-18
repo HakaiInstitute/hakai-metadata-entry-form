@@ -145,10 +145,10 @@ const TaxaTab = ({
                     <SupplementalText>
                         <I18n>
                             <En>
-                                Please enter the metadata about the taxonomic areas covered by the resource.
+                                Optional field to enter the metadata about the taxonomic areas covered by the resource.
                             </En>
                             <Fr>
-                                Veuillez saisir les métadonnées sur les domaines taxonomiques couverts par la ressource.
+                                Champ facultatif pour saisir les métadonnées sur les domaines taxonomiques couverts par la ressource.
                             </Fr>
                         </I18n>
                     </SupplementalText>
@@ -169,8 +169,8 @@ const TaxaTab = ({
                     }
                     label={
                         <I18n>
-                            <En>This dataset does not contain any taxonomic classification</En>
-                            <Fr>Cet ensemble de données ne contient aucune classification taxonomique</Fr>
+                            <En>This dataset does not contain any taxonomic classification, or a list of observed taxa are included in the data package or domain-specific repository.</En>
+                            <Fr>Cet ensemble de données ne contient aucune classification taxonomique, ou une liste des taxons observés est incluse dans l'ensemble de données ou dans le référentiel spécifique au domaine.</Fr>
                         </I18n>
                     }
                 />
