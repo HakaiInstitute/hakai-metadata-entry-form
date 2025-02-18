@@ -145,10 +145,10 @@ const TaxaTab = ({
                     <SupplementalText>
                         <I18n>
                             <En>
-                                Optional field to enter the metadata about the taxonomic areas covered by the resource.
+                                Please enter the metadata about the taxonomic areas covered by the resource.
                             </En>
                             <Fr>
-                                Champ facultatif pour saisir les métadonnées sur les domaines taxonomiques couverts par la ressource.
+                                Veuillez saisir les métadonnées sur les domaines taxonomiques couverts par la ressource.
                             </Fr>
                         </I18n>
                     </SupplementalText>
