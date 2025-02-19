@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/hakai-metadata-entry-form/static/css/main.edf2c6ad.css",
-    "main.js": "/hakai-metadata-entry-form/static/js/main.64a5945d.js",
+    "main.js": "/hakai-metadata-entry-form/static/js/main.d95d9d9e.js",
     "static/media/emlTemplate.j2": "/hakai-metadata-entry-form/static/media/emlTemplate.c7cac6e90d63ddf2962e.j2",
     "static/media/spritesheet.svg": "/hakai-metadata-entry-form/static/media/spritesheet.a4e0eb7ad904a4858361.svg",
     "static/media/emlCoverage.j2": "/hakai-metadata-entry-form/static/media/emlCoverage.ba6b51994dacf1f20971.j2",
     "index.html": "/hakai-metadata-entry-form/index.html",
     "main.edf2c6ad.css.map": "/hakai-metadata-entry-form/static/css/main.edf2c6ad.css.map",
-    "main.64a5945d.js.map": "/hakai-metadata-entry-form/static/js/main.64a5945d.js.map"
+    "main.d95d9d9e.js.map": "/hakai-metadata-entry-form/static/js/main.d95d9d9e.js.map"
   },
   "entrypoints": [
     "static/css/main.edf2c6ad.css",
-    "static/js/main.64a5945d.js"
+    "static/js/main.d95d9d9e.js"
   ]
 }
