@@ -320,8 +320,9 @@ class MetadataForm extends FormClassTemplate {
     const instrumentsRef = ref(database, `${region}/users/${auth.currentUser.uid}/instruments`);
 
     // existing instrument
+    // remove any characters that firebase doesn't like in it's paths
     if (id) {
-      update(child(instrumentsRef, id), instrument);
+      update(child(instrumentsRef, id.replace(/[.#$[\]]/g, "_")), instrument);
       return id;
     }
     // new instrument
@@ -341,8 +342,9 @@ class MetadataForm extends FormClassTemplate {
     const platformRef = ref(database, `${region}/users/${auth.currentUser.uid}/platforms`);
 
     // existing instrument
+    // remove any characters that firebase doesn't like in it's paths
     if (id) {
-      update(child(platformRef, id), platform);
+      update(child(platformRef, id.replace(/[.#$[\]]/g, "_")), platform);
       return id;
     }
     // new instrument
