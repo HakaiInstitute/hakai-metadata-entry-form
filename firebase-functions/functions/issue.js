@@ -1,6 +1,8 @@
 const { Octokit, RequestError } = require("octokit");
 const fs = require("fs");
 const { defineString } = require('firebase-functions/params');
+const { logger } = require("firebase-functions/v2");
+
 
 const githubAuth = defineString('GITHUB_AUTH') || defineString('ISSUE_CREATOR_PAT');
 const githubAuthCred = process.env.GITHUB_AUTH || process.env.ISSUE_CREATOR_PAT || githubAuth.value()
@@ -9,7 +11,7 @@ function readIssueText(filename) {
   try {
     return fs.readFileSync(filename, "utf8");
   } catch (err) {
-    console.error(err);
+    logger.log(err);
     return false;
   }
 }
@@ -33,7 +35,7 @@ async function createIssue(title, url) {
     // Octokit errors are instances of RequestError, so they always have an `error.status` property containing the HTTP response code.
     if (error instanceof RequestError) {
       // eslint-disable-next-line no-console
-      console.error(error);
+      logger.log(error);
       // handle Octokit error
       // error.message; // Oops
       // error.status; // 500

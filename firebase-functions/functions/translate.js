@@ -1,4 +1,4 @@
-const functions = require("firebase-functions");
+const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { defineString } = require('firebase-functions/params');
 const AWS = require("aws-sdk");
 
@@ -50,9 +50,9 @@ const translateText = async (
   });
 };
 
-exports.translate = functions.https.onCall(async (data, context) => {
+exports.translate = onCall(async (data, context) => {
   if (!context.auth || !context.auth.token)
-    throw new functions.https.HttpsError("unauthenticated");
+    throw new HttpsError("unauthenticated");
 
   const { text, fromLang } = data;
 

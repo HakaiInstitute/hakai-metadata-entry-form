@@ -1,5 +1,7 @@
 const admin = require("firebase-admin");
-const functions = require("firebase-functions");
+const { onCall, HttpsError } = require("firebase-functions/v2/https");
+const { onValueCreated, onValueUpdated, onValueDeleted } = require("firebase-functions/v2/database");
+const { logger } = require("firebase-functions/v2");
 const https = require("https");
 const axios = require("axios");
 
@@ -17,14 +19,14 @@ function getRecordFilename(record) {
 }
 
 // creates xml for a completed record. returns a URL to the generated XML
-exports.downloadRecord = functions.https.onCall(
-  async ({ record, fileType, region }, context) => {
+exports.downloadRecord = onCall(
+  async ({ record, fileType, region }) => {
 
     let urlBase = urlBaseDefault;
     try {
       urlBase = (await admin.database().ref('admin').child(region).child("recordGeneratorURL").once("value")).val() ?? urlBaseDefault;
     } catch (error) {
-      console.error(`Error fetching recordGeneratorURL for region ${region}, using the default value:`, error);
+      logger.error(`Error fetching recordGeneratorURL for region ${region}, using the default value:`, error);
     }
 
     const url = `${urlBase}recordTo${fileType.toUpperCase()}`;
@@ -39,7 +41,7 @@ async function updateXML(path, region, status = "", filename = "") {
   try {
     urlBase = (await admin.database().ref('admin').child(region).child("recordGeneratorURL").once("value")).val() ?? urlBaseDefault;
   } catch (error) {
-    console.error(`Error fetching recordGeneratorURL for region ${region}, using the default value:`, error);
+    logger.error(`Error fetching recordGeneratorURL for region ${region}, using the default value:`, error);
   }
 
   const url = `${urlBase}record`;
@@ -54,10 +56,10 @@ async function updateXML(path, region, status = "", filename = "") {
 }
 
 // when user clicks "Save", if the record is submitted or published, update the XML
-exports.regenerateXMLforRecord = functions.https.onCall(
+exports.regenerateXMLforRecord = onCall(
   async (data, context) => {
     if (!context.auth || !context.auth.token)
-      throw new functions.https.HttpsError("unauthenticated");
+      throw new HttpsError("unauthenticated");
 
     const { path, status, region } = data;
     if (["submitted", "published"].includes(status)) updateXML(path, region);
@@ -69,9 +71,9 @@ exports.regenerateXMLforRecord = functions.https.onCall(
 // if a record with status=submitted/published is created
 // this ONLY should happen when a submitted/published record is transferred to another user
 // when a new record is created/cloned, it would have status="" so this wouldnt run
-exports.updatesRecordCreate = functions.database
-  .ref("/{region}/users/{userID}/records/{recordID}")
-  .onCreate(async (snpashot, context) => {
+exports.updatesRecordCreate = onValueCreated(
+  "/{region}/users/{userID}/records/{recordID}",
+  async (snpashot, context) => {
     const record = snpashot.val();
     const { region, userID, recordID } = context.params;
     const path = `${region}/${userID}/${recordID}`;
@@ -87,9 +89,9 @@ exports.updatesRecordCreate = functions.database
   });
 
 // if the record changes status we should trigger an update
-exports.updatesRecordUpdate = functions.database
-  .ref("/{region}/users/{userID}/records/{recordID}/status")
-  .onUpdate(({ before, after }, context) => {
+exports.updatesRecordUpdate = onValueUpdated(
+  "/{region}/users/{userID}/records/{recordID}/status",
+  ({ before, after }, context) => {
     const { region, userID, recordID } = context.params;
     const path = `${region}/${userID}/${recordID}`;
 
@@ -107,7 +109,7 @@ exports.updatesRecordUpdate = functions.database
     ) {
       return updateXML(path, region, afterStatus);
     }
-    console.log("no change");
+    logger.log("no change");
     return null;
   });
 
@@ -117,7 +119,7 @@ async function deleteXML(filename, region) {
   try {
     urlBase = (await admin.database().ref('admin').child(region).child("recordGeneratorURL").once("value")).val() ?? urlBaseDefault;
   } catch (error) {
-    console.error(`Error fetching recordGeneratorURL for region ${region}, using the default value:`, error);
+    logger.error(`Error fetching recordGeneratorURL for region ${region}, using the default value:`, error);
   }
 
   const url = `${urlBase}recordDelete`;
@@ -130,9 +132,9 @@ async function deleteXML(filename, region) {
 }
 
 // also trigger update when record is deleted
-exports.updatesRecordDelete = functions.database
-  .ref("/{region}/users/{userID}/records/{recordID}")
-  .onDelete((snpashot, context) => {
+exports.updatesRecordDelete = onValueDeleted(
+  "/{region}/users/{userID}/records/{recordID}",
+  (snpashot, context) => {
     const record = snpashot.val();
     const filename = getRecordFilename(record);
     const { region } = context.params;

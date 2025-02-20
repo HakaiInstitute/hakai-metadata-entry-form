@@ -1,4 +1,5 @@
-const functions = require("firebase-functions");
+const { onValueUpdated } = require("firebase-functions/v2/database");
+const { logger } = require("firebase-functions/v2");
 const admin = require("firebase-admin");
 const { defineString } = require('firebase-functions/params');
 const nodemailer = require("nodemailer");
@@ -21,9 +22,9 @@ const transporter = nodemailer.createTransport({
 /*
 Email the reviewers for the region when a form is submitted for review
 */
-exports.notifyReviewer = functions.database
-  .ref("/{region}/users/{userID}/records/{recordID}/status")
-  .onUpdate(async ({ after, before }, context) => {
+exports.notifyReviewer = onValueUpdated(
+  "/{region}/users/{userID}/records/{recordID}/status",
+  async ({ after, before }, context) => {
     const db = admin.database();
     const { region, userID, recordID } = context.params;
     // Don't notify if going from published to submitted
@@ -50,13 +51,13 @@ exports.notifyReviewer = functions.database
       const title = record.title[language];
 
       if (!title) {
-        console.log(`No title found for record ${recordID}`);
+        logger.log(`No title found for record ${recordID}`);
         return;
       }
-      console.log("region", region);
+      logger.log("region", region);
 
       if (region === "hakai" && !title.includes("JUST TESTING")) {
-        console.log("Creating github issue");
+        logger.log("Creating github issue");
         await createIssue(
           title,
           // `https://cioos-siooc.github.io/metadata-entry-form/#/${language}/${region}/${userID}/${recordID}`
@@ -69,20 +70,20 @@ exports.notifyReviewer = functions.database
 
       // returning result
       if (reviewers.includes(authorEmail)) {
-        console.log("Author is a reviewer, don't notifiy other reviewers");
+        logger.log("Author is a reviewer, don't notifiy other reviewers");
         return;
       }
       if (!reviewers.length) {
-        console.log(`No reviewers found to notify for region ${region}`);
+        logger.log(`No reviewers found to notify for region ${region}`);
         return;
       }
-      console.log("Emailing ", reviewers);
+      logger.log("Emailing ", reviewers);
       transporter.sendMail(
         mailOptionsReviewer(reviewers, title, region),
         (e, info) => {
-          console.log(info);
+          logger.log(info);
           if (e) {
-            console.log(e);
+            logger.log(e);
           }
         }
       );
@@ -91,9 +92,9 @@ exports.notifyReviewer = functions.database
 /*
 Email the user when a record is published
 */
-exports.notifyUser = functions.database
-  .ref("/{region}/users/{userID}/records/{recordID}/status")
-  .onUpdate(async ({ after }, context) => {
+exports.notifyUser = onValueUpdated(
+  "/{region}/users/{userID}/records/{recordID}/status",
+  async ({ after }, context) => {
     const db = admin.database();
     // The userID of the author
     // We don't know the user ID of the publisher
@@ -106,7 +107,7 @@ exports.notifyUser = functions.database
       const reviewers = reviewersFirebase.val().split(",");
 
       if (!reviewers.length) {
-        console.log("No reviewers for region", region);
+        logger.log("No reviewers for region", region);
         return;
       }
       const recordFB = await db
@@ -121,18 +122,18 @@ exports.notifyUser = functions.database
       const authorEmail = authorUserInfo.email;
 
       if (reviewers.includes(authorEmail)) {
-        console.log("Author is a reviewer, don't notifiy author");
+        logger.log("Author is a reviewer, don't notifiy author");
         return;
       }
 
-      console.log("Emailing ", authorEmail);
+      logger.log("Emailing ", authorEmail);
 
       const record = recordFB.toJSON();
       const { language } = record;
       const title = record.title[language];
 
       if (!title) {
-        console.log(`No title found for record ${recordID}`);
+        logger.log(`No title found for record ${recordID}`);
         return;
       }
       // getting dest email by query string
@@ -142,9 +143,9 @@ exports.notifyUser = functions.database
       transporter.sendMail(
         mailOptionsAuthor(authorEmail, title, region),
         (e, info) => {
-          console.log(info);
+          logger.log(info);
           if (e) {
-            console.log(e);
+            logger.log(e);
           }
         }
       );
