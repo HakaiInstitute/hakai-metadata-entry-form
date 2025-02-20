@@ -11,6 +11,8 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS: google-application-credentials.json
     steps:
       - name: Checkout Repo
         uses: actions/checkout@master
@@ -24,25 +26,9 @@ jobs:
         working-directory: firebase-functions/functions
       - name: Create Service Account key JSON
         shell: bash
-        run: echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_CIOOS_METADATA_FORM }}" >> gcloud.json
-        working-directory: firebase-functions/functions
+        run: echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_CIOOS_METADATA_FORM }}"| base64 --decode > "google-application-credentials.json"
+
       - name: Authenticate Firebase and Deploy
-        run: |
-          echo "Creating .env file..."
-          echo "GMAIL_USER=${{ secrets.GMAIL_USER }}" >> .env
-          echo "GMAIL_PASS=${{ secrets.GMAIL_PASS }}" >> .env
-          echo "DATACITE_AUTH_HASH=${{ secrets.DATACITE_AUTH_HASH }}" >> .env
-          echo "AWS_REGION=${{ secrets.AWS_REGION }}" >> .env
-          echo "AWS_ACCESSKEYID=${{ secrets.AWS_ACCESSKEYID }}" >> .env
-          echo "AWS_SECRETACCESSKEY=${{ secrets.AWS_SECRETACCESSKEY }}" >> .env
-          echo "GITHUB_AUTH=${{ secrets.ISSUE_CREATOR_PAT }}" >> .env
-          echo "REACT_APP_GOOGLE_CLOUD_API_KEY=${{ secrets.REACT_APP_GOOGLE_CLOUD_API_KEY }}" >> .env
-          echo "REACT_APP_GOOGLE_CLOUD_API_KEY_DEV=${{ secrets.REACT_APP_GOOGLE_CLOUD_API_KEY_DEV }}" >> .env
-          echo "Setting Firebase Project..."
-          firebase use default
-          echo "Deploying to Firebase..."
-          firebase deploy --non-interactive --only functions
-        working-directory: firebase-functions/functions
         env:
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
           GMAIL_PASS: ${{ secrets.GMAIL_PASS }}
@@ -54,4 +40,20 @@ jobs:
           REACT_APP_GOOGLE_CLOUD_API_KEY: ${{ secrets.REACT_APP_GOOGLE_CLOUD_API_KEY }}
           REACT_APP_GOOGLE_CLOUD_API_KEY_DEV: ${{ secrets.REACT_APP_GOOGLE_CLOUD_API_KEY_DEV }}
           PROJECT_PATH: ./firebase-functions
-          GOOGLE_APPLICATION_CREDENTIALS: ./gcloud.json
+        run: |
+          echo "Creating .env file..."
+          echo "GMAIL_USER=${{ secrets.GMAIL_USER }}" >> .env
+          echo "GMAIL_PASS=${{ secrets.GMAIL_PASS }}" >> .env
+          echo "DATACITE_AUTH_HASH=${{ secrets.DATACITE_AUTH_HASH }}" >> .env
+          echo "AWS_REGION=${{ secrets.AWS_REGION }}" >> .env
+          echo "AWS_ACCESSKEYID=${{ secrets.AWS_ACCESSKEYID }}" >> .env
+          echo "AWS_SECRETACCESSKEY=${{ secrets.AWS_SECRETACCESSKEY }}" >> .env
+          echo "GITHUB_AUTH=${{ secrets.ISSUE_CREATOR_PAT }}" >> .env
+          echo "REACT_APP_GOOGLE_CLOUD_API_KEY=${{ secrets.REACT_APP_GOOGLE_CLOUD_API_KEY }}" >> .env
+          echo "REACT_APP_GOOGLE_CLOUD_API_KEY_DEV=${{ secrets.REACT_APP_GOOGLE_CLOUD_API_KEY_DEV }}" >> .env
+          echo "GOOGLE_APPLICATION_CREDENTIALS=google-application-credentials.json" >> .env
+          echo "Deploying to Firebase..."
+          ls -la
+          firebase deploy --only functions --project default --non-interactive --debug
+        working-directory: firebase-functions/functions
+
