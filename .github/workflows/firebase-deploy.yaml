@@ -35,11 +35,11 @@ jobs:
           echo "REACT_APP_GOOGLE_CLOUD_API_KEY=${{ secrets.REACT_APP_GOOGLE_CLOUD_API_KEY }}" >> .env
           echo "REACT_APP_GOOGLE_CLOUD_API_KEY_DEV=${{ secrets.REACT_APP_GOOGLE_CLOUD_API_KEY_DEV }}" >> .env
           echo "Create Service Account key JSON"
-          echo $FIREBASE_SERVICE_ACCOUNT_CIOOS_METADATA_FORM > gcloud.json
+          echo "${{secrets.FIREBASE_SERVICE_ACCOUNT_CIOOS_METADATA_FORM}}" > ./gcloud.json
           echo "Setting Firebase Project..."
-          GOOGLE_APPLICATION_CREDENTIALS=gcloud.json firebase use default
+          firebase use default
           echo "Deploying to Firebase..."
-          GOOGLE_APPLICATION_CREDENTIALS=gcloud.json firebase deploy --only functions
+          firebase deploy --non-interactive --only functions
         working-directory: firebase-functions/functions
         env:
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
@@ -52,3 +52,4 @@ jobs:
           REACT_APP_GOOGLE_CLOUD_API_KEY: ${{ secrets.REACT_APP_GOOGLE_CLOUD_API_KEY }}
           REACT_APP_GOOGLE_CLOUD_API_KEY_DEV: ${{ secrets.REACT_APP_GOOGLE_CLOUD_API_KEY_DEV }}
           PROJECT_PATH: ./firebase-functions
+          GOOGLE_APPLICATION_CREDENTIALS: ./gcloud.json
