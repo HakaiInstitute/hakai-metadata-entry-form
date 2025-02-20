@@ -26,7 +26,7 @@ jobs:
         working-directory: firebase-functions/functions
       - name: Create Service Account key JSON
         shell: bash
-        run: echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_CIOOS_METADATA_FORM }}"| base64 --decode > "google-application-credentials.json"
+        run: echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_CIOOS_METADATA_FORM }}" > "google-application-credentials.json"
 
       - name: Authenticate Firebase and Deploy
         env:
