@@ -26,7 +26,7 @@ jobs:
         working-directory: firebase-functions/functions
       - name: Create Service Account key JSON
         shell: bash
-        run: echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}" > "google-application-credentials.json"
+        run: echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_CIOOS_METADATA_FORM }}" > "google-application-credentials.json"
         working-directory: firebase-functions/functions
       - name: Authenticate Firebase and Deploy
         env:
@@ -54,6 +54,7 @@ jobs:
           echo "GOOGLE_APPLICATION_CREDENTIALS=google-application-credentials.json" >> .env
           echo "Deploying to Firebase..."
           ls -la
+          cat google-application-credentials.json
           firebase deploy --only functions --project default --non-interactive --debug
         working-directory: firebase-functions/functions
 
