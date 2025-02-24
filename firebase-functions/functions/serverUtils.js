@@ -3,7 +3,7 @@ const { logger } = require("firebase-functions/v2");
 const fetch = require('node-fetch');
 
 // Function to check if a given URL is active
-exports.checkURLActiveSecondGen = onCall(async (data) => {
+exports.checkURLActive = onCall(async (data) => {
     let url = data;
     logger.log('Received URL:', url);
 

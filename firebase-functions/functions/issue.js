@@ -17,7 +17,7 @@ function readIssueText(filename) {
 }
 
 // Create an issue in the github repo when a metadta form record is submited for review
-async function createIssueSecondGen(title, url) {
+async function createIssue(title, url) {
   const octokit = new Octokit({
     auth: githubAuthCred,
   });
@@ -47,4 +47,4 @@ async function createIssueSecondGen(title, url) {
     }
   }
 }
-module.exports = createIssueSecondGen;
+module.exports = createIssue;
