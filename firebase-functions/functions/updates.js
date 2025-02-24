@@ -19,7 +19,7 @@ function getRecordFilename(record) {
 }
 
 // creates xml for a completed record. returns a URL to the generated XML
-exports.downloadRecord = onCall(
+exports.downloadRecordSecondGen = onCall(
   async ({ record, fileType, region }) => {
 
     let urlBase = urlBaseDefault;
@@ -56,7 +56,7 @@ async function updateXML(path, region, status = "", filename = "") {
 }
 
 // when user clicks "Save", if the record is submitted or published, update the XML
-exports.regenerateXMLforRecord = onCall(
+exports.regenerateXMLforRecordSecondGen = onCall(
   async (data, context) => {
     if (!context.auth || !context.auth.token)
       throw new HttpsError("unauthenticated");
@@ -71,7 +71,7 @@ exports.regenerateXMLforRecord = onCall(
 // if a record with status=submitted/published is created
 // this ONLY should happen when a submitted/published record is transferred to another user
 // when a new record is created/cloned, it would have status="" so this wouldnt run
-exports.updatesRecordCreate = onValueCreated(
+exports.updatesRecordCreateSecondGen = onValueCreated(
   "/{region}/users/{userID}/records/{recordID}",
   async (snpashot, context) => {
     const record = snpashot.val();
@@ -89,7 +89,7 @@ exports.updatesRecordCreate = onValueCreated(
   });
 
 // if the record changes status we should trigger an update
-exports.updatesRecordUpdate = onValueUpdated(
+exports.updatesRecordUpdateSecondGen = onValueUpdated(
   "/{region}/users/{userID}/records/{recordID}/status",
   ({ before, after }, context) => {
     const { region, userID, recordID } = context.params;
@@ -132,7 +132,7 @@ async function deleteXML(filename, region) {
 }
 
 // also trigger update when record is deleted
-exports.updatesRecordDelete = onValueDeleted(
+exports.updatesRecordDeleteSecondGen = onValueDeleted(
   "/{region}/users/{userID}/records/{recordID}",
   (snpashot, context) => {
     const record = snpashot.val();

@@ -22,7 +22,7 @@ const transporter = nodemailer.createTransport({
 /*
 Email the reviewers for the region when a form is submitted for review
 */
-exports.notifyReviewer = onValueUpdated(
+exports.notifyReviewerSecondGen = onValueUpdated(
   "/{region}/users/{userID}/records/{recordID}/status",
   async ({ after, before }, context) => {
     const db = admin.database();
@@ -92,7 +92,7 @@ exports.notifyReviewer = onValueUpdated(
 /*
 Email the user when a record is published
 */
-exports.notifyUser = onValueUpdated(
+exports.notifyUserSecondGen = onValueUpdated(
   "/{region}/users/{userID}/records/{recordID}/status",
   async ({ after }, context) => {
     const db = admin.database();

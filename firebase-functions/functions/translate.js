@@ -50,7 +50,7 @@ const translateText = async (
   });
 };
 
-exports.translate = onCall(async (data, context) => {
+exports.translateSecondGen = onCall(async (data, context) => {
   if (!context.auth || !context.auth.token)
     throw new HttpsError("unauthenticated");
 
