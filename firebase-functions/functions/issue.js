@@ -47,4 +47,4 @@ async function createIssueSecondGen(title, url) {
     }
   }
 }
-module.exports = createIssue;
+module.exports = createIssueSecondGen;
