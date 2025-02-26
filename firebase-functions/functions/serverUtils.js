@@ -3,13 +3,12 @@ const { logger } = require("firebase-functions/v2");
 const fetch = require('node-fetch');
 
 // Function to check if a given URL is active
-exports.checkURLActive = onCall(async (data) => {
-    let url = data;
-    logger.log('Received URL:', url);
-
-    if (!url) {
+exports.checkURLActive = onCall(async (request) => {
+    if (!request.data.url) {
         throw new HttpsError('invalid-argument', 'The function must be called with one argument "url".');
     }
+    let url = request.data.url;
+    logger.log('Received URL:', url);
 
     // Prepend 'http://' if the URL does not start with 'http://' or 'https://'
     if (!url.startsWith('http://') && !url.startsWith('https://')) {

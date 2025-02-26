@@ -50,11 +50,11 @@ const translateText = async (
   });
 };
 
-exports.translate = onCall(async (data, context) => {
-  if (!context.auth || !context.auth.token)
+exports.translate = onCall(async (request) => {
+  if (!request.auth || !request.auth.token)
     throw new HttpsError("unauthenticated");
 
-  const { text, fromLang } = data;
+  const { text, fromLang } = request.data;
 
   const toLang = fromLang === "en" ? "fr" : "en";
 

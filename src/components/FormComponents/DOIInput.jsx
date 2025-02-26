@@ -55,34 +55,34 @@ const DOIInput = ({ record, name, handleUpdateDatasetIdentifier, handleUpdateDoi
                 record: mappedDataCiteObject,
                 region,
             })
-                .then((response) => {
-                    return response.data.data.attributes;
-                })
-                .then(async (attributes) => {
-                    // Update the record object (local state) with datasetIdentifier and doiCreationStatus
-                    handleUpdateDatasetIdentifier({ target: { value: `https://doi.org/${attributes.doi}` }});
-                    handleUpdateDoiCreationStatus({ target: { value: "draft" }});
+            .then((response) => {
+                return response.data.data.attributes;
+            })
+            .then(async (attributes) => {
+                // Update the record object (local state) with datasetIdentifier and doiCreationStatus
+                handleUpdateDatasetIdentifier({ target: { value: `https://doi.org/${attributes.doi}` }});
+                handleUpdateDoiCreationStatus({ target: { value: "draft" }});
 
-                    // Save doi values to database now without waiting for the user to press save
-                    // Create a new object with updated properties
-                    const updatedRecord = {
-                        ...record,
-                        datasetIdentifier: `https://doi.org/${attributes.doi}`,
-                        doiCreationStatus: "draft",
-                    };
+                // Save doi values to database now without waiting for the user to press save
+                // Create a new object with updated properties
+                const updatedRecord = {
+                    ...record,
+                    datasetIdentifier: `https://doi.org/${attributes.doi}`,
+                    doiCreationStatus: "draft",
+                };
 
-                    // Save the updated record to the Firebase database
-                    const recordsRef = ref(database, `${region}/users/${userID}/records`);
+                // Save the updated record to the Firebase database
+                const recordsRef = ref(database, `${region}/users/${userID}/records`);
 
-                    if (record.recordID) {
-                        await update(child(recordsRef, record.recordID), { datasetIdentifier: updatedRecord.datasetIdentifier, doiCreationStatus: updatedRecord.doiCreationStatus });
-                    }
+                if (record.recordID) {
+                    await update(child(recordsRef, record.recordID), { datasetIdentifier: updatedRecord.datasetIdentifier, doiCreationStatus: updatedRecord.doiCreationStatus });
+                }
 
-                    setDoiGenerated(true);
-                })
-                .finally(() => {
-                    setLoadingDoi(false);
-                });
+                setDoiGenerated(true);
+            })
+            .finally(() => {
+                setLoadingDoi(false);
+            });
             
         } catch (err) {
             setDoiErrorFlag(true);
@@ -169,21 +169,24 @@ const DOIInput = ({ record, name, handleUpdateDatasetIdentifier, handleUpdateDoi
             if (debouncedDoiIdValue.includes('doi.org/')) {
                 id = debouncedDoiIdValue.split('doi.org/').pop();
             }
-            getDoiStatus({ doi: id, region })
-                .then(response => {
-                    if (mounted.current)
+            const fetchDoiStatus = async () => {
+                try {
+                    const response = await getDoiStatus({ doi: id, region });
+                    if (mounted.current) {
                         handleUpdateDoiCreationStatus({ target: { name, value: response.data } });
-                })
-                .catch(err => {
-                    /* eslint-disable no-console */
-                    console.error(err)
-                });
+                    }
+                } catch (err) {
+                    // eslint-disable-next-line no-console
+                    console.error(err);
+                }
+            }
+            fetchDoiStatus();
         }
 
         return () => {
             mounted.current = false;
         };
-    }, [debouncedDoiIdValue, getDoiStatus, doiIsValid])
+    }, [debouncedDoiIdValue, name, doiIsValid])
 
 
 

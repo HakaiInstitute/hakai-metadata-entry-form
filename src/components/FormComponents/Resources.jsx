@@ -59,7 +59,7 @@ const Resources = ({
       if (resource.url && validateURL(resource.url)) {
         if (!debouncePool.current[idx]){
           debouncePool.current[idx] = debounce( async (innerResource) => {
-            const response = await checkURLActive(innerResource.url)
+            const response = await checkURLActive({url: innerResource.url});
             if (mounted.current){
               setUrlIsActive((prevStatus) => ({ ...prevStatus, [innerResource.url]: response.data }))
             }
