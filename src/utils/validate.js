@@ -350,7 +350,7 @@ export const warnings = {
           if (!dist.url){
             return { ...dist, status: false };
           }
-          const res = await checkURLActive(dist.url);
+          const res = await checkURLActive({url: dist.url});
           return {...dist, status:res.data};
         })
       );

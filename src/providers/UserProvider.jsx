@@ -9,6 +9,7 @@ import { getAuth, onAuthStateChanged } from "../auth";
 import firebase from "../firebase";
 import FormClassTemplate from "../components/Pages/FormClassTemplate";
 
+
 export const UserContext = createContext({ user: null, authIsLoading: false });
 
 class UserProvider extends FormClassTemplate {
@@ -43,7 +44,7 @@ class UserProvider extends FormClassTemplate {
 
         const functions = getFunctions();
         const getDatacitePrefix = httpsCallable(functions, "getDatacitePrefix");
-        getDatacitePrefix(region)
+        getDatacitePrefix({region})
           .then((prefix) => {
             this.setState({
               datacitePrefix: prefix?.data,

@@ -78,7 +78,7 @@ class Admin extends FormClassTemplate {
             return response.data;
           }
         );
-        const credentialsStored = await getCredentialsStored(region).then(
+        const credentialsStored = await getCredentialsStored({region}).then(
           (response) => {
             return response.data;
           }

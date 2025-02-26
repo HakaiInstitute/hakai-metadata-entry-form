@@ -17,7 +17,13 @@ function readIssueText(filename) {
 }
 
 // Create an issue in the github repo when a metadta form record is submited for review
-async function createIssue(title, url) {
+async function createIssue(request) {
+  if (!request.data.title || !request.data.url) {
+    throw new Error("Title or URL not provided");
+  }
+  const title = request.data.title;
+  const url = request.data.url;
+
   const octokit = new Octokit({
     auth: githubAuthCred,
   });
