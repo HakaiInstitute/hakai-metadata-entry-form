@@ -56,6 +56,6 @@ jobs:
           echo "REACT_APP_GOOGLE_CLOUD_API_KEY=${{ secrets.REACT_APP_GOOGLE_CLOUD_API_KEY }}" >> .env
           echo "REACT_APP_GOOGLE_CLOUD_API_KEY_DEV=${{ secrets.REACT_APP_GOOGLE_CLOUD_API_KEY_DEV }}" >> .env
           echo "Deploying to Firebase..."
-          firebase deploy --only functions --project default --non-interactive --debug
+          firebase deploy --only functions --project cioos-metadata-form --non-interactive --debug
         working-directory: firebase-functions/functions
 
