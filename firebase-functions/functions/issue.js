@@ -7,7 +7,7 @@ const { logger } = require("firebase-functions/v2");
 const githubAuth = defineString('GITHUB_AUTH') || defineString('ISSUE_CREATOR_PAT');
 const githubAuthCred = process.env.GITHUB_AUTH || process.env.ISSUE_CREATOR_PAT || githubAuth.value()
 
-function readIssueText(filename) {
+function readTextFromFile(filename) {
   try {
     return fs.readFileSync(filename, "utf8");
   } catch (err) {
@@ -26,12 +26,14 @@ async function createIssue(title, url) {
   const octokit = new Octokit({
     auth: githubAuthCred,
   });
-  const issueText = readIssueText("dataset-name.md");
+  const members = readTextFromFile("github_issue_assignees.csv").split(",");
+  const issueText = readTextFromFile("dataset-name.md");
   const input = {
     owner: "HakaiInstitute",
     repo: "metadata-review",
     title: `Dataset - ${title}`,
     body: `## ${title}\n\n<${url}>\n\n${issueText}`,
+    assignees: members,
   };
 
   try {
