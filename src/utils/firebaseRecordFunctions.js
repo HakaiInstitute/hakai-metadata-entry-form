@@ -137,7 +137,8 @@ export async function transferRecord(
 
 export function returnRecordToDraft(region, userID, key) {
   const database = getDatabase(firebase);
-  return set(ref(database, `${region})/users/${userID}/records/${key}/status`), "");
+  const recordRef = ref(database, `${region}/users/${userID}/records/${key}`)
+  return set(child(recordRef, "status"), "");
 }
 
 export async function getRegionProjects(region) {

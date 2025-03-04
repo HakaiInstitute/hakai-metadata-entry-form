@@ -20,8 +20,8 @@ function getRecordFilename(record) {
 
 // creates xml for a completed record. returns a URL to the generated XML
 exports.downloadRecord = onCall(
-  async ({ record, fileType, region }) => {
-
+  async (request) => {
+    const { record, fileType, region } = request.data
     let urlBase = urlBaseDefault;
     try {
       urlBase = (await admin.database().ref('admin').child(region).child("recordGeneratorURL").once("value")).val() ?? urlBaseDefault;
@@ -57,12 +57,14 @@ async function updateXML(path, region, status = "", filename = "") {
 
 // when user clicks "Save", if the record is submitted or published, update the XML
 exports.regenerateXMLforRecord = onCall(
-  async (data, context) => {
-    if (!context.auth || !context.auth.token)
+  async (request) => {
+    if (!request.auth || !request.auth.token)
       throw new HttpsError("unauthenticated");
 
-    const { path, status, region } = data;
-    if (["submitted", "published"].includes(status)) updateXML(path, region);
+    const { path, status, region } = request.data;
+    if (["submitted", "published"].includes(status)) {
+      updateXML(path, region);
+    }
     // No need to create new XML if the record is a draft.
     // If the record is complete, the user can still generate XML for a draft record
   }
@@ -73,9 +75,9 @@ exports.regenerateXMLforRecord = onCall(
 // when a new record is created/cloned, it would have status="" so this wouldnt run
 exports.updatesRecordCreate = onValueCreated(
   "/{region}/users/{userID}/records/{recordID}",
-  async (snpashot, context) => {
-    const record = snpashot.val();
-    const { region, userID, recordID } = context.params;
+  async (event) => {
+    const record = event.data.val();
+    const { region, userID, recordID } = event.params;
     const path = `${region}/${userID}/${recordID}`;
     const { status } = record;
     const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -91,14 +93,14 @@ exports.updatesRecordCreate = onValueCreated(
 // if the record changes status we should trigger an update
 exports.updatesRecordUpdate = onValueUpdated(
   "/{region}/users/{userID}/records/{recordID}/status",
-  ({ before, after }, context) => {
-    const { region, userID, recordID } = context.params;
+  (event) => {
+    const { region, userID, recordID } = event.params;
     const path = `${region}/${userID}/${recordID}`;
 
     // record deleted event
 
-    const afterStatus = after.val();
-    const beforeStatus = before.val();
+    const afterStatus = event.data.after.val();
+    const beforeStatus = event.data.before.val();
 
     // status changed to draft
     if (
@@ -134,10 +136,10 @@ async function deleteXML(filename, region) {
 // also trigger update when record is deleted
 exports.updatesRecordDelete = onValueDeleted(
   "/{region}/users/{userID}/records/{recordID}",
-  (snpashot, context) => {
-    const record = snpashot.val();
+  (event) => {
+    const record = event.data.val();
     const filename = getRecordFilename(record);
-    const { region } = context.params;
+    const { region } = event.params;
     
     return deleteXML(filename, region);
   });
