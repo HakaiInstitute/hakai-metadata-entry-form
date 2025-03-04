@@ -28,7 +28,7 @@ exports.notifyReviewer = onValueUpdated(
     const db = admin.database();
     const { region, userID, recordID } = event.params;
     // Don't notify if going from published to submitted
-    if (event.data.after.val() === "submitted" && !event.dataq.before.val()) {
+    if (event.data.after.val() === "submitted" && !event.data.before.val()) {
       const reviewersFirebase = await db
         .ref(`/admin/${region}/permissions/reviewers`)
         .once("value");
@@ -58,13 +58,13 @@ exports.notifyReviewer = onValueUpdated(
 
       if (region === "hakai" && !title.includes("JUST TESTING")) {
         logger.log("Creating github issue");
-        await createIssue({
+        await createIssue(
           title,
           // `https://cioos-siooc.github.io/metadata-entry-form/#/${language}/${region}/${userID}/${recordID}`
           // hard coding the front end url as it was done this way before and I can't think of a good way of 
           // making this dynamic. Firebase know where the request came from as this is trigered on update of a record.
-          url: `https://hakaiinstitute.github.io/hakai-metadata-entry-form/#/${language}/${region}/${userID}/${recordID}`
-        });
+          url = `https://hakaiinstitute.github.io/hakai-metadata-entry-form/#/${language}/${region}/${userID}/${recordID}`
+        );
       }
       // getting dest email by query string
 
