@@ -16,14 +16,13 @@ function readIssueText(filename) {
   }
 }
 
-// Create an issue in the github repo when a metadta form record is submited for review
-async function createIssue(request) {
-  if (!request.data.title || !request.data.url) {
+// Create an issue in the github repo when a metadata form record is submitted for review
+// this function is called from other firebase functions so is not an http request, just a regular function
+async function createIssue(title, url) {
+  if (!title || !url) {
     throw new Error("Title or URL not provided");
   }
-  const title = request.data.title;
-  const url = request.data.url;
-
+  
   const octokit = new Octokit({
     auth: githubAuthCred,
   });
