@@ -20,4 +20,4 @@ jobs:
         env:
           PROJECT_ID: cioos-metadata-form-dev
           GITHUB_AUTH: ${{ secrets.ISSUE_CREATOR_PAT }}
-          GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
+          GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY_DEV }}
