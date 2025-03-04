@@ -24,11 +24,11 @@ Email the reviewers for the region when a form is submitted for review
 */
 exports.notifyReviewer = onValueUpdated(
   "/{region}/users/{userID}/records/{recordID}/status",
-  async ({ after, before }, context) => {
+  async (event) => {
     const db = admin.database();
-    const { region, userID, recordID } = context.params;
+    const { region, userID, recordID } = event.params;
     // Don't notify if going from published to submitted
-    if (after.val() === "submitted" && !before.val()) {
+    if (event.data.after.val() === "submitted" && !event.dataq.before.val()) {
       const reviewersFirebase = await db
         .ref(`/admin/${region}/permissions/reviewers`)
         .once("value");
@@ -94,12 +94,12 @@ Email the user when a record is published
 */
 exports.notifyUser = onValueUpdated(
   "/{region}/users/{userID}/records/{recordID}/status",
-  async ({ after }, context) => {
+  async (event) => {
     const db = admin.database();
     // The userID of the author
     // We don't know the user ID of the publisher
-    const { region, userID, recordID } = context.params;
-    if (after.val() === "published") {
+    const { region, userID, recordID } = event.params;
+    if (event.data.after.val() === "published") {
       const reviewersFirebase = await db
         .ref(`/admin/${region}/permissions/reviewers`)
         .once("value");
