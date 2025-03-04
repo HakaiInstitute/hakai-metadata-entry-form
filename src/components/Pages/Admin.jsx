@@ -73,7 +73,7 @@ class Admin extends FormClassTemplate {
         const permissionsRef = child(regionAdminRef, "permissions");
 
         const projects = await getRegionProjects(region);
-        const datacitePrefix = await getDatacitePrefix(region).then(
+        const datacitePrefix = await getDatacitePrefix({region}).then(
           (response) => {
             return response.data;
           }
