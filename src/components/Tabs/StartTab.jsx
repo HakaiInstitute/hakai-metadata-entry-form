@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useContext } from "react";
 
 import { Save } from "@material-ui/icons";
 import {
@@ -26,14 +26,20 @@ import SharedUsersList from "../FormComponents/SharedUsersList";
 
 import SelectInput from "../FormComponents/SelectInput";
 
+import { UserContext } from "../../providers/UserProvider"; // Import the module that defines the user context
+
 const {DataCollectionSampling, ...filtereMetadataScopeCodes} = metadataScopeCodes;
 
 const StartTab = ({ disabled, record, updateRecord, bulkUpdateRecord, handleUpdateRecord, userID }) => {
   const { language, region } = useParams();
   const regionInfo = regions[region];
   const [showShareRecord, setShowShareRecord] = useState(false)
-  const mounted = useRef(false);
-  
+  const mounted = useRef(false);  
+
+  const {
+    isAdmin: userIsAdmin,
+  } = useContext(UserContext);
+
   const updateResourceType = (value) => {
     if(Array.isArray(value) && value.length === 1 && value.includes('other')){
       if (Array.isArray(record.eov)){
@@ -77,10 +83,10 @@ const StartTab = ({ disabled, record, updateRecord, bulkUpdateRecord, handleUpda
 
     const isNewRecord = !record.recordID;
 
-    if (userID === record.userID || isNewRecord) {
+    if (userID === record.userID || isNewRecord || userIsAdmin) {
       setShowShareRecord(true);
     }
-  }, [userID, record.userID, record.recordID]);
+  }, [userID, userIsAdmin, record.userID, record.recordID]);
 
   return (
     <Grid item xs>
