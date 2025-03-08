@@ -223,7 +223,7 @@ def record_json_to_yaml(record):
             for platform in platformList:
                 instruments = []
                 for instrument in instrumentsList:
-                    if instrument["platform"] == platform["id"]:
+                    if instrument.get("platform","") == platform["id"]:
                         instruments.append(instrument)
                 if len(instruments) > 0:
                     platform["instruments"] = instruments
