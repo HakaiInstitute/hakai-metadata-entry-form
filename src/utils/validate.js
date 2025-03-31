@@ -300,7 +300,7 @@ const validators = {
   },
   instruments: {
     tab: "platform",
-    validation: (val, record) => val.every((instrument) => instrument.id) && (!record.noPlatform && record.platforms.length > 1 && val.every((instrument) => instrument?.platform)),
+    validation: (val, record) => val.every((instrument) => instrument.id) && (record.noPlatform || record.platforms.length === 1 || (record.platforms.length > 1 && val.every((instrument) => instrument?.platform))),
     error: {
       en: "Instrument ID is required and Instrument must be assigned to a platform if more then one platform exists",
       fr: "L'identifiant de l'instrument est requis et l'instrument doit être attribué à une plate-forme s'il existe plusieurs plates-formes",
