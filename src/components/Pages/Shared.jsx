@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Typography, CircularProgress, List } from "@material-ui/core";
-import { getDatabase, ref, onValue, get, off } from "firebase/database";
+import { getDatabase, ref, onValue, get, off, remove } from "firebase/database";
 import { I18n, En, Fr } from "../I18n";
 import FormClassTemplate from "./FormClassTemplate";
 import firebase from "../../firebase";
@@ -64,7 +64,13 @@ class Shared extends FormClassTemplate {
                     recordID,
                   };
                 }
-                throw new Error(`No details found for record ${recordID} by author ${authorID}`);
+                // else it must have been deleted so lets remove the share reference
+                try{
+                  const recordSharesRef = ref(database, `${region}/shares/${user.uid}/${authorID}/${recordID}`);
+                  return remove(recordSharesRef);
+                } catch (error) {
+                  throw new Error(`No details found for record ${recordID} by author ${authorID}:  ${error}`);
+                }
               });
               recordsPromises.push(recordPromise); // Collect the promise
             });

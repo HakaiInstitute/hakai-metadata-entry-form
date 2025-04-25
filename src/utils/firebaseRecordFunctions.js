@@ -91,9 +91,21 @@ export async function submitRecord(region, userID, key, status, record) {
 
 }
 
-export function deleteRecord(region, userID, key) {
+export async function deleteRecord(region, authorID, recordID) {
   const database = getDatabase(firebase);
-  return remove(ref(database, `${region}/users/${userID}/records/${key}`));
+
+  // remove record from any shared users
+  const sharedWith = (await get(ref(database, `${region}/users/${authorID}/records/${recordID}/sharedWith`), "value")).val();
+  console.log(sharedWith);
+  Object.keys(sharedWith).forEach((userID) => {
+    const sharesRef = ref(database, `${region}/shares/${userID}/${authorID}/${recordID}`);
+    remove(sharesRef)
+           .catch(error => { throw new Error(`Error unsharing record by author ${authorID} with user ${userID}: ${error}`) });
+
+  });
+
+  // remove the record it's self
+  return remove(ref(database, `${region}/users/${authorID}/records/${recordID}`));
 }
 
 export async function transferRecord(
