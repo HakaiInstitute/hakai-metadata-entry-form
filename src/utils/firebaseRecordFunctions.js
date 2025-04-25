@@ -96,7 +96,6 @@ export async function deleteRecord(region, authorID, recordID) {
 
   // remove record from any shared users
   const sharedWith = (await get(ref(database, `${region}/users/${authorID}/records/${recordID}/sharedWith`), "value")).val();
-  console.log(sharedWith);
   Object.keys(sharedWith).forEach((userID) => {
     const sharesRef = ref(database, `${region}/shares/${userID}/${authorID}/${recordID}`);
     remove(sharesRef)
