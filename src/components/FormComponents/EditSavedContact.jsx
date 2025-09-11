@@ -65,9 +65,9 @@ class EditContact extends FormClassTemplate {
       this.setState({
         orgRor: payload.id,
         orgName: payload.name,
-        orgURL: payload.links.find(() => true) || "",
-        orgCity: payload.addresses.find(() => true).city || "",
-        orgCountry: payload.country.country_name,
+        orgURL: payload.links?.find(() => true) || "",
+        orgCity: payload.addresses?.find(() => true).city || "",
+        orgCountry: payload.country?.country_name || "",
       });
     };
   }
