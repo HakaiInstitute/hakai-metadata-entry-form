@@ -231,7 +231,7 @@ def record_json_to_yaml(record):
             record_yaml["platform"] = record.get("platforms", [])
 
     # If there's no distributor set, set it to the data contact (owner)
-    all_roles = [contact["role"] for contact in record["contacts"]]
+    all_roles = [contact["role"] for contact in record.get("contacts", []) if contact.get("role")]
     all_roles_flat = [j for sub in all_roles for j in sub]
 
     if "distributor" not in all_roles_flat:
