@@ -96,12 +96,14 @@ export async function deleteRecord(region, authorID, recordID) {
 
   // remove record from any shared users
   const sharedWith = (await get(ref(database, `${region}/users/${authorID}/records/${recordID}/sharedWith`), "value")).val();
-  Object.keys(sharedWith).forEach((userID) => {
-    const sharesRef = ref(database, `${region}/shares/${userID}/${authorID}/${recordID}`);
-    remove(sharesRef)
-           .catch(error => { throw new Error(`Error unsharing record by author ${authorID} with user ${userID}: ${error}`) });
+  if (sharedWith){
+    Object.keys(sharedWith).forEach((userID) => {
+      const sharesRef = ref(database, `${region}/shares/${userID}/${authorID}/${recordID}`);
+      remove(sharesRef)
+            .catch(error => { throw new Error(`Error unsharing record by author ${authorID} with user ${userID}: ${error}`) });
 
-  });
+    });
+  }
 
   // remove the record it's self
   return remove(ref(database, `${region}/users/${authorID}/records/${recordID}`));
