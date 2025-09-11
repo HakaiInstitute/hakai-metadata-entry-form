@@ -79,7 +79,9 @@ class Shared extends FormClassTemplate {
           // Await the resolution of all record detail promises
           const records = await Promise.all(recordsPromises);
           // Accumulate the records into an object mapping record IDs to record details
-          const sharedRecords = records.reduce((acc, record) => {
+          const sharedRecords = records.filter(
+            (record) => record && record.recordID
+          ).reduce((acc, record) => {
             acc[record.recordID] = record; // Map each record by its ID
             return acc;
           }, {});
