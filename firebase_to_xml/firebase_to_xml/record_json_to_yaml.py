@@ -236,7 +236,7 @@ def record_json_to_yaml(record):
 
     if "distributor" not in all_roles_flat:
         for contact in record["contacts"]:
-            if "owner" in contact["role"]:
+            if "owner" in contact.get("role",""):
                 contact["role"] += ["distributor"]
 
     organization = record.get("organization")
