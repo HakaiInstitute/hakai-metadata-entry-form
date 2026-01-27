@@ -91,7 +91,7 @@ const licenses = {
         "url": "https://www.apache.org/licenses/LICENSE-2.0",
         "code": "Apache-2.0",
     },
-    "No License": {
+    "None": {
         "title": {
             "en": "No License",
             "fr": "Aucune licence",
