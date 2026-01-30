@@ -172,6 +172,7 @@ function recordToDataCite(metadata, language, region, datacitePrefix) {
     if (metadata.title.fr) {
         mappedDataCiteObject.data.attributes.titles.push({
             lang: "fr",
+            titleType: "TranslatedTitle",
             title: metadata.title.fr,
         });
     }
@@ -279,7 +280,7 @@ function recordToDataCite(metadata, language, region, datacitePrefix) {
                 {
                   relatedIdentifier: code,
                   relatedIdentifierType: authority,
-                  relationType: 'isDerivedFrom',
+                  relationType: 'IsDerivedFrom',
                 })) || []),
               ...(processingStep?.map(({authority, code}) => (
                 {
