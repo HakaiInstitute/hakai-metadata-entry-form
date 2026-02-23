@@ -224,18 +224,11 @@ export default function MiniDrawer({ children }) {
             }}
           >
             <I18n>
-              <En>Metadata Entry Tool</En>
-              <Fr>Outil de saisie de métadonnées</Fr>
+              <En>Hakai Metadata Entry Tool</En>
+              <Fr>Hakai Outil de saisie de métadonnées</Fr>
             </I18n>
           </Typography>
           <div style={{ marginLeft: "auto" }}>
-            <img
-              src={`${process.env.PUBLIC_URL}/cioos_website_top_banner_${language}.png`}
-              alt="CIOOS/SIOOC"
-              width={350}
-              style={{ verticalAlign: "bottom", paddingRight: "15px" }}
-            />
-
             <Select
               color="primary"
               className={classes.languageSelector}
@@ -264,10 +257,18 @@ export default function MiniDrawer({ children }) {
             }),
           }}
         >
+          <div style={{display: "flex"}}>
+          <img
+              src={`${process.env.PUBLIC_URL}/cioos-${region}-${language}.png`}
+              alt="CIOOS/SIOOC"
+              height={45}
+              style={{ verticalAlign: "bottom", marginRight: "auto", marginLeft: "auto", marginTop: "auto", marginBottom: "auto" }}
+          />
           <div className={classes.toolbar}>
             <IconButton onClick={() => handleDrawerClose()}>
               {theme.direction === "rtl" ? <ChevronRight /> : <ChevronLeft />}
             </IconButton>
+          </div>
           </div>
 
           {user && (
