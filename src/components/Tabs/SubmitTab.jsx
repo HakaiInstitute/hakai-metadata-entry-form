@@ -41,7 +41,7 @@ const SubmitTab = ({ record, submitRecord, userID, doiUpdated, doiError }) => {
   useEffect(() => {
     mounted.current = true;
 
-    if (userID === record.userID) {
+    if (userID === record.userID || ('sharedWith' in record && Object.keys(record.sharedWith).includes(userID))) {
       setShowSubmitButton(true);
     }
 
