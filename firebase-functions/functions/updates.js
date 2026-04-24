@@ -5,7 +5,7 @@ const { logger } = require("firebase-functions/v2");
 const https = require("https");
 const axios = require("axios");
 
-const urlBaseDefault = "https://pac-dev1.cioos.org/cioos-xml/"
+const urlBaseDefault = "https://pac-dev1.cioos.org/cioos-xml/" // overwritten by setting in the firebase database
 
 
 function getRecordFilename(record) {
