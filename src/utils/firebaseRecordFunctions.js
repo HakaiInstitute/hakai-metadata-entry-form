@@ -26,7 +26,10 @@ export async function cloneRecord(
   record.created = new Date().toISOString();
   record.filename = "";
   record.timeFirstPublished = "";
+  record.importDatasetIdentifier = "";
   record.datasetIdentifier = "";
+  record.doiCreationStatus = "";
+
 
   if (record.title.en) record.title.en = `${record.title.en} (Copy)`;
   if (record.title.fr) record.title.fr = `${record.title.fr} (Copte)`;
