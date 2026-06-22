@@ -17,8 +17,8 @@ function recordToDataCite(metadata, language, region, datacitePrefix) {
                 orgRor,
             } = contact;
 
-            // Create an individual creator object with names
             if (givenNames) {
+                // Create an individual creator object with names
                 creator = {
                     name: `${lastName}, ${givenNames}`,
                     nameType: "Personal",
@@ -40,6 +40,22 @@ function recordToDataCite(metadata, language, region, datacitePrefix) {
                             schemeUri: "https://orcid.org",
                             nameIdentifier: indOrcid,
                             nameIdentifierScheme: "ORCID",
+                        },
+                    ];
+                }
+            } else if (orgName) {
+                // Create an organizational creator when no individual name is present
+                creator = {
+                    name: orgName,
+                    nameType: "Organizational",
+                };
+
+                if (orgRor) {
+                    creator.nameIdentifiers = [
+                        {
+                            schemeUri: "https://ror.org",
+                            nameIdentifier: orgRor,
+                            nameIdentifierScheme: "ROR",
                         },
                     ];
                 }
@@ -274,7 +290,7 @@ function recordToDataCite(metadata, language, region, datacitePrefix) {
     // via relatedIdentifiers datacite field
     if (metadata.history) {
       mappedDataCiteObject.data.attributes.relatedIdentifiers = 
-        [ ...mappedDataCiteObject.data.attributes.relatedIdentifiers, 
+        [ ...(mappedDataCiteObject.data.attributes.relatedIdentifiers || []),
           ...metadata.history.flatMap( ({ source, processingStep, additionalDocumentation }) => (
             [ ...(source?.map( ({authority, code}) => (
                 {

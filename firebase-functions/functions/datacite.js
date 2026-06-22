@@ -66,7 +66,7 @@ exports.createDraftDoi = onCall(async (request) => {
     // if there is an error response from DataCite, include the status and statusText from the API error
     // if the error doesn't have a response, include the error message
     if (err.response) {
-      errMessage = `from DataCite API: ${err.response.status} - ${err.response.statusText}`;
+      errMessage = `from DataCite API: ${err.response.status} - ${err.response.statusText}: ${JSON.stringify(err.response.data)}`;
     } else if (err.message) {
       errMessage = err.message;
     }
@@ -133,7 +133,7 @@ exports.updateDraftDoi = onCall(async (request) => {
     // if there is an error response from DataCite, include the status and statusText from the API error
     // if the error doesn't have a response, include the error message
     if (err.response) {
-      errMessage = `from DataCite API: ${err.response.status} - ${err.response.statusText}`;
+      errMessage = `from DataCite API: ${err.response.status} - ${err.response.statusText}: ${JSON.stringify(err.response.data)}`;
     } else if (err.message) {
       errMessage = err.message;
     }
@@ -189,7 +189,7 @@ exports.deleteDraftDoi = onCall(async (request) => {
     // if there is an error response from DataCite, include the status and statusText from the API error
     // if the error doesn't have a response, include the error message
     if (err.response) {
-      errMessage = `from DataCite API: ${err.response.status} - ${err.response.statusText}`;
+      errMessage = `from DataCite API: ${err.response.status} - ${err.response.statusText}: ${JSON.stringify(err.response.data)}`;
     } else if (err.message) {
       errMessage = err.message;
     }
