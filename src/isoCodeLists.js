@@ -192,11 +192,21 @@ export const progressCodes = {
     },
   },
 
+  tentative: {
+    title: { en: "Tentative", fr: "Provisoire" },
+    text: {
+      en:
+        "Data have not been fully curated, and changes to the data are likely before it is completed. Use to indicate data are provisional",
+      fr:
+        "Les données n'ont pas encore été entièrement validées et des modifications sont susceptibles d'y être apportées avant leur finalisation. Utilisez pour indiquer que les données sont provisoires",
+    },
+  },
+
   historicalArchive: {
     title: { en: "Historical Archive", fr: "Archives historiques" },
     text: {
       en:
-        "Data has been stored in an offline storage facility. use to indicate data are archived",
+        "Data has been stored in an offline storage facility. Use to indicate data are archived",
       fr:
         "Les données ont été stockées dans une installation de stockage hors connexion. Utilisez pour indiquer que les données sont archivées",
     },
