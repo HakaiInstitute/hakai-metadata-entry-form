@@ -8,7 +8,7 @@ function recordToDataCite(metadata, language, region, datacitePrefix) {
     const creators = metadata.contacts ? metadata.contacts.reduce((creatorList, contact) => {
         let creator;
 
-        if (contact.inCitation && !contact.role.includes("publisher")) {
+        if (contact.inCitation && !(contact.role.includes("publisher") && contact.role.length === 1)) {
             const {
                 givenNames,
                 lastName,
