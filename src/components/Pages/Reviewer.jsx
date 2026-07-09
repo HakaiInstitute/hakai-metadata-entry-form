@@ -196,9 +196,9 @@ class Reviewer extends FormClassTemplate {
   }
 
   editRecord(key, userID) {
-    const { history } = this.props;
     const { language, region } = this.props.match.params;
-    history.push(`/${language}/${region}/${userID}/${key}`);
+    // open record in a new window rather then in the same window which is what history would do
+    window.open(`/${language}/${region}/${userID}/${key}`, "_blank");
   }
 
   async handleTransferRecord(recordID, userID) {
