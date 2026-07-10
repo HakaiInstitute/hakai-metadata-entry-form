@@ -122,7 +122,8 @@ class MetadataForm extends FormClassTemplate {
       highlightMissingRequireFields: false,
 
       editorInfo: { email: "", displayName: "" },
-      loggedInUserCanEditRecord: false,
+      loggedInUserOwnsRecord: false,
+      loggedInUserIsSharedWith: false,
       saveIncompleteRecordModalOpen: false,
       doiUpdated: false,
       doiError: false,
@@ -142,7 +143,6 @@ class MetadataForm extends FormClassTemplate {
         const loggedInUserID = user.uid;
         const recordUserID = isNewRecord ? loggedInUserID : match.params.userID;
         const loggedInUserOwnsRecord = loggedInUserID === recordUserID;
-        const { isReviewer } = this.context;
 
         this.setState({ projects: await getRegionProjects(region), loggedInUserID: user.uid });
         let editorInfo;
@@ -201,7 +201,7 @@ class MetadataForm extends FormClassTemplate {
 
         // if recordID is set then the user is editing an existing record
         if (isNewRecord) {
-          this.setState({ loading: false, loggedInUserCanEditRecord: true });
+          this.setState({ loading: false, loggedInUserOwnsRecord });
         } else {
           const recRef = child(userDataRef, `records/${recordID}`);
           onValue(recRef, (recordFireBase) => {
@@ -216,12 +216,10 @@ class MetadataForm extends FormClassTemplate {
 
             const loggedInUserIsSharedWith = record.sharedWith && record.sharedWith[loggedInUserID] === true;
 
-            const loggedInUserCanEditRecord =
-              isReviewer || loggedInUserOwnsRecord || loggedInUserIsSharedWith;
-
             this.setState({
               record: standardizeRecord(record, null, null, recordID),
-              loggedInUserCanEditRecord,
+              loggedInUserOwnsRecord,
+              loggedInUserIsSharedWith,
             });
 
             this.setState({ loading: false });
@@ -459,11 +457,13 @@ class MetadataForm extends FormClassTemplate {
       saveDisabled,
       loading,
       highlightMissingRequireFields,
-      loggedInUserCanEditRecord,
+      loggedInUserOwnsRecord,
+      loggedInUserIsSharedWith,
       saveIncompleteRecordModalOpen,
       projects,
       loggedInUserID,
     } = this.state;
+    const loggedInUserCanEditRecord = isReviewer || loggedInUserOwnsRecord || loggedInUserIsSharedWith;
 
     if (!record) {
       return <NotFound />;

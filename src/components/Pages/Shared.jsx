@@ -116,9 +116,9 @@ class Shared extends FormClassTemplate {
   }
 
   editRecord(key, authorID) {
-    const { match, history } = this.props;
+    const { match } = this.props;
     const { language, region } = match.params;
-    history.push(`/${language}/${region}/${authorID}/${key}`);
+    window.open(`${process.env.PUBLIC_URL}/#/${language}/${region}/${authorID}/${key}`, "_blank");
   }
 
   handleCloneRecord(recordID, authorID) {

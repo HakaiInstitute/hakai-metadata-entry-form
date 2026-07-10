@@ -78,10 +78,10 @@ class Submissions extends FormClassTemplate {
   }
 
   editRecord(key) {
-    const { match, history } = this.props;
+    const { match } = this.props;
     const { language, region } = match.params;
     const { currentUser } = auth;
-    history.push(`/${language}/${region}/${currentUser.uid}/${key}`);
+    window.open(`${process.env.PUBLIC_URL}/#/${language}/${region}/${currentUser.uid}/${key}`, "_blank");
   }
 
   handleSubmitRecord(key) {

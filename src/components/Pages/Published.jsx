@@ -49,9 +49,9 @@ class Published extends FormClassTemplate {
   }
 
   editRecord(key, userID) {
-    const { match, history } = this.props;
+    const { match } = this.props;
     const { language, region } = match.params;
-    history.push(`/${language}/${region}/${userID}/${key}`);
+    window.open(`${process.env.PUBLIC_URL}/#/${language}/${region}/${userID}/${key}`, "_blank");
   }
 
   // user ID is that of the record owner, not the editor
