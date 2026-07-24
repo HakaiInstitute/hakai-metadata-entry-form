@@ -6,6 +6,7 @@ import {
     Button,
 } from "@material-ui/core";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import Alert from "@material-ui/lab/Alert";
 import { useDebounce } from "use-debounce";
 import { useParams } from "react-router-dom";
 import { getDatabase, ref, child, update } from "firebase/database";
@@ -35,7 +36,9 @@ const DOIInput = ({ record, name, handleUpdateDatasetIdentifier, handleUpdateDoi
     const [loadingDoi, setLoadingDoi] = useState(false);
     const [loadingDoiUpdate, setLoadingDoiUpdate] = useState(false);
     const [loadingDoiDelete, setLoadingDoiDelete] = useState(false);
+    const [doiGenerateFlag, setDoiGenerateFlag] = useState(false);
     const [doiUpdateFlag, setDoiUpdateFlag] = useState(false);
+    const [doiDeleteFlag, setDoiDeleteFlag] = useState(false);
 
     const generateDoiDisabled = doiGenerated || loadingDoi || (record.doiCreationStatus !== "" || record.recordID === "");
     const showGenerateDoi = Boolean(datacitePrefix);
@@ -50,43 +53,32 @@ const DOIInput = ({ record, name, handleUpdateDatasetIdentifier, handleUpdateDoi
 
         try {
             const mappedDataCiteObject = recordToDataCite(record, language, region, datacitePrefix);
+            const response = await createDraftDoi({ record: mappedDataCiteObject, region });
+            const { attributes } = response.data.data;
 
-            await createDraftDoi({
-                record: mappedDataCiteObject,
-                region,
-            })
-            .then((response) => {
-                return response.data.data.attributes;
-            })
-            .then(async (attributes) => {
-                // Update the record object (local state) with datasetIdentifier and doiCreationStatus
-                handleUpdateDatasetIdentifier({ target: { value: `https://doi.org/${attributes.doi}` }});
-                handleUpdateDoiCreationStatus({ target: { value: "draft" }});
+            handleUpdateDatasetIdentifier({ target: { value: `https://doi.org/${attributes.doi}` } });
+            handleUpdateDoiCreationStatus({ target: { value: "draft" } });
 
-                // Save doi values to database now without waiting for the user to press save
-                // Create a new object with updated properties
-                const updatedRecord = {
-                    ...record,
+            const recordsRef = ref(database, `${region}/users/${userID}/records`);
+            if (record.recordID) {
+                await update(child(recordsRef, record.recordID), {
                     datasetIdentifier: `https://doi.org/${attributes.doi}`,
                     doiCreationStatus: "draft",
-                };
+                });
+            }
 
-                // Save the updated record to the Firebase database
-                const recordsRef = ref(database, `${region}/users/${userID}/records`);
-
-                if (record.recordID) {
-                    await update(child(recordsRef, record.recordID), { datasetIdentifier: updatedRecord.datasetIdentifier, doiCreationStatus: updatedRecord.doiCreationStatus });
-                }
-
-                setDoiGenerated(true);
-            })
-            .finally(() => {
-                setLoadingDoi(false);
-            });
-            
+            setDoiGenerated(true);
+            setDoiGenerateFlag(true);
+            setDoiErrorFlag(false);
         } catch (err) {
             setDoiErrorFlag(true);
+            setDoiGenerateFlag(false);
             throw new Error(`Error in handleGenerateDOI: ${err}`);
+        } finally {
+            setLoadingDoi(false);
+            setTimeout(() => {
+                setDoiGenerateFlag(false);
+            }, 3000);
         }
     }
 
@@ -118,44 +110,38 @@ const DOIInput = ({ record, name, handleUpdateDatasetIdentifier, handleUpdateDoi
         const database = getDatabase(firebase);
 
         try {
-            // Extract DOI from the full URL
             const doi = record.datasetIdentifier.replace('https://doi.org/', '');
+            const response = await deleteDraftDoi({ doi, region });
+            const statusCode = response.data;
 
-            deleteDraftDoi({ doi, region })
-                .then((response) => response.data)
-                .then(async (statusCode) => {
-                    if (statusCode === 204) {
-                        // Update the record object with datasetIdentifier and doiCreationStatus
-                        handleUpdateDatasetIdentifier({ target: { name, value: "" } });
-                        handleUpdateDoiCreationStatus({ target: { name, value: "" } });
+            if (statusCode === 204) {
+                handleUpdateDatasetIdentifier({ target: { name, value: "" } });
+                handleUpdateDoiCreationStatus({ target: { name, value: "" } });
 
-                        // Create a new object with updated properties
-                        const updatedRecord = {
-                            ...record,
-                            datasetIdentifier: "",
-                            doiCreationStatus: "",
-                        };
+                const recordsRef = ref(database, `${region}/users/${userID}/records`);
+                if (record.recordID) {
+                    await update(child(recordsRef, record.recordID), {
+                        datasetIdentifier: "",
+                        doiCreationStatus: "",
+                    });
+                }
 
-                        // Save the updated record to the Firebase database
-                        const recordsRef = ref(database, `${region}/users/${userID}/records`);
-
-                        if (record.recordID) {
-                            await update(child(recordsRef, record.recordID), { datasetIdentifier: updatedRecord.datasetIdentifier, doiCreationStatus: updatedRecord.doiCreationStatus });
-                        }
-
-                        setDoiGenerated(false);
-                    } else {
-                        setDoiErrorFlag(true);
-                    }
-                })
-                .finally(() => {
-                    setLoadingDoiDelete(false);
-                });
+                setDoiGenerated(false);
+                setDoiDeleteFlag(true);
+                setDoiErrorFlag(false);
+            } else {
+                setDoiErrorFlag(true);
+                setDoiDeleteFlag(false);
+            }
         } catch (err) {
-            // eslint-disable-next-line no-console
-            console.error(err);
             setDoiErrorFlag(true);
+            setDoiDeleteFlag(false);
             throw err;
+        } finally {
+            setLoadingDoiDelete(false);
+            setTimeout(() => {
+                setDoiDeleteFlag(false);
+            }, 3000);
         }
     }
    
@@ -276,19 +262,33 @@ const DOIInput = ({ record, name, handleUpdateDatasetIdentifier, handleUpdateDoi
             }
             {
                 doiErrorFlag && (
-                    <span>
+                    <Alert severity="error">
                         <I18n
                             en="Error occurred with DOI API"
                             fr="Une erreur s'est produite avec l'API DOI"
                         />
-                    </span>
+                    </Alert>
+                )
+            }
+            {
+                doiGenerateFlag && (
+                    <Alert severity="success">
+                        <I18n en="DOI has been generated" fr="Le DOI a été généré" />
+                    </Alert>
                 )
             }
             {
                 doiUpdateFlag && (
-                    <span>
+                    <Alert severity="success">
                         <I18n en="DOI has been updated" fr="Le DOI a été mis à jour" />
-                    </span>
+                    </Alert>
+                )
+            }
+            {
+                doiDeleteFlag && (
+                    <Alert severity="success">
+                        <I18n en="DOI has been deleted" fr="Le DOI a été supprimé" />
+                    </Alert>
                 )
             }
 
