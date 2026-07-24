@@ -19,6 +19,9 @@ async function performUpdateDraftDoi(record, region, language, datacitePrefix) {
   }
 
   const response = await updateDraftDoi(dataObject);
+  if (response.data.status !== 200) {
+    console.error("DOI update failed with status", response.data.status, response.data);
+  }
   return response.data.status;
 }
 
