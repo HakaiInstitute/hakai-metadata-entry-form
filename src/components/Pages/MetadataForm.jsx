@@ -221,7 +221,6 @@ class MetadataForm extends FormClassTemplate {
               loggedInUserOwnsRecord,
               loggedInUserIsSharedWith,
             });
-
             this.setState({ loading: false });
           });
           this.listenerRefs.push(recRef);
@@ -287,17 +286,16 @@ class MetadataForm extends FormClassTemplate {
   async handleUpdateDraftDOI() {
     const { match } = this.props;
     const { region, language } = match.params;
-    const { record} = this.state;
+    const { record } = this.state;
     const { datacitePrefix } = this.context;
 
     try {
-      if (datacitePrefix && record.datasetIdentifier){
+      if (datacitePrefix && record.datasetIdentifier && record.doiCreationStatus && record.doiCreationStatus !== ""){
         const statusCode = await performUpdateDraftDoi(record, region, language, datacitePrefix);
-
-      if (statusCode === 200) {
-        this.state.doiUpdated = true
-      } else {
-        this.state.doiError = true
+        if (statusCode === 200) {
+          this.state.doiUpdated = true
+        } else {
+          this.state.doiError = true
         }
       }
     } catch (err) {
@@ -412,6 +410,7 @@ class MetadataForm extends FormClassTemplate {
       await update(child(recordsRef,record.recordID),
         // using blankRecord here in case there are new fields that the old record didn't have
         { ...getBlankRecord(), ...record });
+      await this.handleUpdateDraftDOI()
     } else {
       // new record
       const newNode = await push(recordsRef, record);
