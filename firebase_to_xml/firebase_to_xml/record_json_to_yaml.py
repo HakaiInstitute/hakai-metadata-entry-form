@@ -69,7 +69,13 @@ def fix_lat_long_polygon(polygon):
     cleanPolygon = polygon.replace(", ",",")
     coords = cleanPolygon.split(" ")
     for coord in coords:
-        [lat, long] = coord.split(",")
+        parts = coord.split(",")
+        if len(parts) != 2:
+            raise ValueError(
+                f"Malformed polygon coordinate {coord!r} in polygon {polygon!r}: "
+                f"expected 'lat,long' but found {len(parts)} value(s)"
+            )
+        lat, long = parts
         fixed.append(",".join([long, lat]))
     return " ".join(fixed)
 
@@ -107,6 +113,10 @@ def record_json_to_yaml(record):
 
 
     polygon = record.get("map", {}).get("polygon", "")
+    try:
+        fixed_polygon = fix_lat_long_polygon(polygon)
+    except ValueError as err:
+        raise ValueError(f"{err} (record: {full_url})") from err
 
     record_yaml = {
         "metadata": {
@@ -140,7 +150,7 @@ def record_json_to_yaml(record):
             ]
             if not polygon
             else "",
-            "polygon": fix_lat_long_polygon(polygon),
+            "polygon": fixed_polygon,
             "vertical": [
                 0 if record.get("noVerticalExtent") else float(
                     record.get("verticalExtentMin")),
