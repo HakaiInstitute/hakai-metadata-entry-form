@@ -445,7 +445,7 @@ class MetadataForm extends FormClassTemplate {
   render() {
     const { match } = this.props;
     const { language } = match.params;
-    const { isReviewer } = this.context;
+    const { isReviewer, isAdmin } = this.context;
 
     const {
       userContacts,
@@ -591,8 +591,10 @@ class MetadataForm extends FormClassTemplate {
                   label={<I18n en="Submit" fr="Soumettre" />}
                   value="submit"
                   disabled={
-                    record.status === "submitted" ||
-                    record.status === "published"
+                    !isAdmin &&
+                    !isReviewer &&
+                    (record.status === "submitted" ||
+                      record.status === "published")
                   }
                 />
               )}
