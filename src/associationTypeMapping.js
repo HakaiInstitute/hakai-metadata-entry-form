@@ -12,7 +12,7 @@ const associationTypeToIso = {
     "HasVersion": "revisionOf",
     "IsVersionOf": "revisionOf",
     "IsNewVersionOf": "revisionOf",
-    "PreviousVersionOf": "crossReference",
+    "IsPreviousVersionOf": "crossReference",
     "IsPartOf": "largerWorkCitation",
     "HasPart": "isComposedOf",
     "IsPublishedIn": "largerWorkCitation",

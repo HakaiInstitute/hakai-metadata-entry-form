@@ -661,8 +661,8 @@ export const associationTypeCode = {
     },
     isoValue: "revisionOf",
   },
-  PreviousVersionOf: {
-    title: { en: "Previous Version Of", fr: "Version précédente de" },
+  IsPreviousVersionOf: {
+    title: { en: "Is Previous Version Of", fr: "Version précédente de" },
     text: {
       en: "A is previous version of B", fr: "A est la version précédente de B",
     },
