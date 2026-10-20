@@ -255,7 +255,7 @@ const RelatedWorks = ({
                     <En>Enter the title of the related resource</En>
                     <Fr>Entrez le titre de l'œuvre concernée</Fr>
                   </I18n>
-                  <RequiredMark passes={resourceStep.title?.en || resourceStep.title?.fr} />
+                  <RequiredMark passes={resourceStep.title?.en && resourceStep.title?.fr} />
                 </QuestionText>{" "}
                 <BilingualTextInput
                   name="title"

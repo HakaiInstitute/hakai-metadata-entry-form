@@ -237,14 +237,21 @@ const validators = {
     tab: "resources",
     validation: (val) =>
       Array.isArray(val) &&
-      val.filter((dist) => dist.name && dist.url && validator.isURL(dist.url))
-        .length,
+      val.length > 0 &&
+      val.every(
+        (dist) =>
+          dist.name &&
+          dist.name.en &&
+          dist.name.fr &&
+          dist.url &&
+          validator.isURL(dist.url)
+      ),
 
     error: {
       en:
-        "Must have at least one resource. If a URL is included it must be valid.",
+        "Must have at least one resource. Every resource must have a name in both French and English and a valid URL.",
       fr:
-        "Doit avoir au moins une ressource. Vérifiez si votre URL est valide.",
+        "Doit avoir au moins une ressource. Chaque ressource doit avoir un titre en français et en anglais ainsi qu'une URL valide.",
     },
   },
   associated_resources: {

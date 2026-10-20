@@ -255,7 +255,7 @@ const Resources = ({
                       <En>Enter a name for the resource</En>
                       <Fr>Entrez un titre pour la ressource</Fr>
                     </I18n>
-                      <RequiredMark passes={resourceStep.name?.en || resourceStep.name?.fr} />
+                      <RequiredMark passes={resourceStep.name?.en && resourceStep.name?.fr} />
                   </QuestionText>
                   <BilingualTextInput
                     name="name"
