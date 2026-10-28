@@ -18,7 +18,7 @@ function readTextFromFile(filename) {
 
 // Create an issue in the github repo when a metadata form record is submitted for review
 // this function is called from other firebase functions so is not an http request, just a regular function
-async function createIssue(title, url) {
+async function createIssue(title, url, filename, region) {
   if (!title || !url) {
     throw new Error("Title or URL not provided");
   }
@@ -32,7 +32,7 @@ async function createIssue(title, url) {
     owner: "HakaiInstitute",
     repo: "metadata-review",
     title: `Dataset - ${title}`,
-    body: `## ${title}\n\n<${url}>\n\n${issueText}`,
+    body: `## Title:<${title}>\n\nRecord URL:<${url}>\n\nRecord Filename:<${filename}>\n\nRecord Region:<${region}>\n\n${issueText}`,
     assignees: members,
   };
 

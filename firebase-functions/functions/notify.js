@@ -63,7 +63,9 @@ exports.notifyReviewer = onValueUpdated(
           // `https://cioos-siooc.github.io/metadata-entry-form/#/${language}/${region}/${userID}/${recordID}`
           // hard coding the front end url as it was done this way before and I can't think of a good way of 
           // making this dynamic. Firebase know where the request came from as this is trigered on update of a record.
-          url = `https://hakaiinstitute.github.io/hakai-metadata-entry-form/#/${language}/${region}/${userID}/${recordID}`
+          url = `https://hakaiinstitute.github.io/hakai-metadata-entry-form/#/${language}/${region}/${userID}/${recordID}`,
+          filename = record.filename,
+          region
         );
       }
       // getting dest email by query string
