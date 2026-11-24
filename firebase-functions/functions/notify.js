@@ -1,5 +1,6 @@
 const { onValueUpdated } = require("firebase-functions/v2/database");
 const { logger } = require("firebase-functions/v2");
+const { withSentry } = require("./sentry");
 const admin = require("firebase-admin");
 const { defineString } = require('firebase-functions/params');
 const nodemailer = require("nodemailer");
@@ -24,7 +25,7 @@ Email the reviewers for the region when a form is submitted for review
 */
 exports.notifyReviewer = onValueUpdated(
   "/{region}/users/{userID}/records/{recordID}/status",
-  async (event) => {
+  withSentry("notifyReviewer", async (event) => {
     const db = admin.database();
     const { region, userID, recordID } = event.params;
     // Don't notify if going from published to submitted
@@ -90,13 +91,13 @@ exports.notifyReviewer = onValueUpdated(
         }
       );
     }
-  });
+  }));
 /*
 Email the user when a record is published
 */
 exports.notifyUser = onValueUpdated(
   "/{region}/users/{userID}/records/{recordID}/status",
-  async (event) => {
+  withSentry("notifyUser", async (event) => {
     const db = admin.database();
     // The userID of the author
     // We don't know the user ID of the publisher
@@ -152,4 +153,4 @@ exports.notifyUser = onValueUpdated(
         }
       );
     }
-  });
+  }));

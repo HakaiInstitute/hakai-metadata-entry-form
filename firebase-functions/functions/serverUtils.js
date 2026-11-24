@@ -1,6 +1,7 @@
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { logger } = require("firebase-functions/v2");
 const fetch = require('node-fetch');
+const { withSentry } = require("./sentry");
 
 // Hosts that must never be probed. Without this the function is a request-forgery
 // primitive: the caller picks the host and port, and the boolean return value reports
@@ -27,7 +28,7 @@ function assertHostIsAllowed(hostname) {
 }
 
 // Function to check if a given URL is active
-exports.checkURLActive = onCall(async (request) => {
+exports.checkURLActive = onCall(withSentry("checkURLActive", async (request) => {
     // onCall does not reject callers that send no token at all, so without this the
     // function is reachable anonymously from anywhere.
     if (!request.auth || !request.auth.uid) {
@@ -65,4 +66,4 @@ exports.checkURLActive = onCall(async (request) => {
         logger.error('Error in checkURLActive for URL:', url, error);
         return false; // Return false if an error occurs
     }
-})
+}))
