@@ -436,6 +436,7 @@ class MetadataForm extends FormClassTemplate {
       // save. Catching it keeps it from becoming an unhandled rejection, but console
       // alone would also keep it out of Sentry, so report it explicitly.
       regenerateXMLforRecord({ path, status, filename, region }).catch((err) => {
+        // eslint-disable-next-line no-console
         console.error('Error regenerating XML for record: ', err);
         Sentry.captureException(err);
       });
