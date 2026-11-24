@@ -15,6 +15,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { Save } from "@material-ui/icons";
 import { withRouter } from "react-router-dom";
 import { getDatabase, ref, child, onValue, update, push } from "firebase/database";
+import * as Sentry from "@sentry/react";
 
 import FormClassTemplate from "./FormClassTemplate";
 import { I18n, En, Fr } from "../I18n";
@@ -432,9 +433,11 @@ class MetadataForm extends FormClassTemplate {
       const { status, filename } = record;
 
       // the record itself is already saved, so a generator failure shouldn't fail the
-      // save - but it does need to be logged rather than becoming an unhandled rejection
+      // save. Catching it keeps it from becoming an unhandled rejection, but console
+      // alone would also keep it out of Sentry, so report it explicitly.
       regenerateXMLforRecord({ path, status, filename, region }).catch((err) => {
         console.error('Error regenerating XML for record: ', err);
+        Sentry.captureException(err);
       });
     }
 
