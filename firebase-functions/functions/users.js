@@ -1,5 +1,6 @@
 const admin = require("firebase-admin");
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
+const { withSentry } = require("./sentry");
 
 // region is used as a database path segment, so it must not contain path separators
 const regionPattern = /^[A-Za-z0-9_-]+$/;
@@ -12,7 +13,7 @@ const regionPattern = /^[A-Za-z0-9_-]+$/;
 // This returns just the directory fields, read with the Admin SDK, so the broad client
 // read grant is no longer needed. The shape matches what the picker previously got from
 // the database so the component logic is unchanged.
-exports.lookupRegionUsers = onCall(async (request) => {
+exports.lookupRegionUsers = onCall(withSentry("lookupRegionUsers", async (request) => {
   if (!request.auth || !request.auth.uid) {
     throw new HttpsError("unauthenticated", "Authentication required.");
   }
@@ -49,4 +50,4 @@ exports.lookupRegionUsers = onCall(async (request) => {
     }
     return directory;
   }, {});
-});
+}));

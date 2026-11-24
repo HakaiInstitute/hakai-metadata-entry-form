@@ -47,6 +47,8 @@ jobs:
           # RECORD_DELETE_TOKEN is the former name, kept as a fallback so the rename
           # can land before the new secret exists.
           RECORD_API_TOKEN: ${{ secrets.RECORD_API_TOKEN || secrets.RECORD_DELETE_TOKEN }}
+          # Unset is handled: the functions log a warning and fall back to Cloud Logging.
+          SENTRY_DSN_FUNCTIONS: ${{ secrets.SENTRY_DSN_FUNCTIONS }}
         run: |
           echo "Creating .env file..."
           echo "GMAIL_USER=${{ secrets.GMAIL_USER }}" >> .env
@@ -59,6 +61,7 @@ jobs:
           echo "REACT_APP_GOOGLE_CLOUD_API_KEY=${{ secrets.REACT_APP_GOOGLE_CLOUD_API_KEY }}" >> .env
           echo "REACT_APP_GOOGLE_CLOUD_API_KEY_DEV=${{ secrets.REACT_APP_GOOGLE_CLOUD_API_KEY_DEV }}" >> .env
           echo "RECORD_API_TOKEN=${{ secrets.RECORD_API_TOKEN || secrets.RECORD_DELETE_TOKEN }}" >> .env
+          echo "SENTRY_DSN=${{ secrets.SENTRY_DSN_FUNCTIONS }}" >> .env
           echo "Deploying to Firebase..."
           firebase deploy --only functions --project cioos-metadata-form --non-interactive --debug
         working-directory: firebase-functions/functions

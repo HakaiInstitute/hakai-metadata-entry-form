@@ -6,13 +6,15 @@
     "shell": "firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log"
+    "logs": "firebase functions:log",
+    "test": "node sentry.test.js"
   },
   "engines": {
     "node": "22"
   },
   "main": "index.js",
   "dependencies": {
+    "@sentry/node": "^8.55.2",
     "aws-sdk": "^2.829.0",
     "axios": "^0.21.4",
     "firebase": "^9.0.2",

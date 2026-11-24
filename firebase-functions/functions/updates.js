@@ -2,8 +2,8 @@ const admin = require("firebase-admin");
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { onValueCreated, onValueUpdated, onValueDeleted } = require("firebase-functions/v2/database");
 const { logger } = require("firebase-functions/v2");
-const https = require("https");
 const axios = require("axios");
+const { withSentry } = require("./sentry");
 
 const urlBaseDefault = "https://pac-dev1.cioos.org/cioos-xml/" // overwritten by setting in the firebase database
 
@@ -54,7 +54,7 @@ function getRecordFilename(record) {
 
 // creates xml for a completed record. returns a URL to the generated XML
 exports.downloadRecord = onCall(
-  async (request) => {
+  withSentry("downloadRecord", async (request) => {
     if (!request.auth || !request.auth.token)
       throw new HttpsError("unauthenticated");
 
@@ -70,22 +70,39 @@ exports.downloadRecord = onCall(
     const url = `${urlBase}recordTo${resolvedType}`;
     const response = await axios.post(url, record);
     return response.data;
-  }
+  })
 );
 
-async function updateXML(path, region, status = "", filename = "") {
+// https.get() hands back a ClientRequest, not a promise, so the old callers returned
+// before the generator had even been contacted and every failure it reported was
+// discarded. Use axios so the response - including a 4xx/5xx - is actually observed.
+async function callRecordGenerator(endpoint, region, params) {
   const urlBase = await getRecordGeneratorURL(region);
 
-  const url = `${urlBase}record`;
+  const url = `${urlBase}${endpoint}`;
   const urlParams = new URLSearchParams({
-    path,
-    status,
-    filename,
+    ...params,
     token: process.env.RECORD_API_TOKEN,
   }).toString();
   const urlFull = `${url}?${urlParams}`;
 
-  return https.get(urlFull);
+  try {
+    const response = await axios.get(urlFull);
+    return response.data;
+  } catch (error) {
+    // Log the generator's own error rather than the bare axios message, which only
+    // says "Request failed with status code 500".
+    logger.error(
+      `${endpoint} failed for region ${region}:`,
+      error.response?.status,
+      error.response?.data ?? error.message
+    );
+    throw error;
+  }
+}
+
+async function updateXML(path, region, status = "", filename = "") {
+  return callRecordGenerator("record", region, { path, status, filename });
 }
 
 // The reviewer/admin lists are stored as one comma-joined string. Match whole entries
@@ -131,7 +148,7 @@ async function assertCanRegenerate(auth, path) {
 
 // when user clicks "Save", if the record is submitted or published, update the XML
 exports.regenerateXMLforRecord = onCall(
-  async (request) => {
+  withSentry("regenerateXMLforRecord", async (request) => {
     if (!request.auth || !request.auth.token)
       throw new HttpsError("unauthenticated");
 
@@ -139,11 +156,26 @@ exports.regenerateXMLforRecord = onCall(
     await assertCanRegenerate(request.auth, path);
 
     if (["submitted", "published"].includes(status)) {
-      updateXML(path, region);
+      try {
+        await updateXML(path, region);
+      } catch (error) {
+        // The call used to be fired and forgotten, so a generator that was failing on
+        // every record still looked like a successful save to the user. Keep the
+        // client-facing message generic, but hang the cause off the error so Sentry's
+        // linked-errors integration shows what the generator actually said.
+        // HttpsError's constructor is (code, message, details) and only forwards the
+        // message to Error, so there is no options argument to pass a cause through.
+        const httpsError = new HttpsError(
+          "internal",
+          "Could not regenerate the record files."
+        );
+        httpsError.cause = error;
+        throw httpsError;
+      }
     }
     // No need to create new XML if the record is a draft.
     // If the record is complete, the user can still generate XML for a draft record
-  }
+  })
 );
 
 // if a record with status=submitted/published is created
@@ -151,7 +183,7 @@ exports.regenerateXMLforRecord = onCall(
 // when a new record is created/cloned, it would have status="" so this wouldnt run
 exports.updatesRecordCreate = onValueCreated(
   "/{region}/users/{userID}/records/{recordID}",
-  async (event) => {
+  withSentry("updatesRecordCreate", async (event) => {
     const record = event.data.val();
     const { region, userID, recordID } = event.params;
     const path = `${region}/${userID}/${recordID}`;
@@ -164,12 +196,12 @@ exports.updatesRecordCreate = onValueCreated(
       return updateXML(path, region);
     }
     return null;
-  });
+  }));
 
 // if the record changes status we should trigger an update
 exports.updatesRecordUpdate = onValueUpdated(
   "/{region}/users/{userID}/records/{recordID}/status",
-  (event) => {
+  withSentry("updatesRecordUpdate", (event) => {
     const { region, userID, recordID } = event.params;
     const path = `${region}/${userID}/${recordID}`;
 
@@ -189,30 +221,20 @@ exports.updatesRecordUpdate = onValueUpdated(
     }
     logger.log("no change");
     return null;
-  });
+  }));
 
 
 async function deleteXML(filename, region) {
-  const urlBase = await getRecordGeneratorURL(region);
-
-  const url = `${urlBase}recordDelete`;
-  const urlParams = new URLSearchParams({
-    filename,
-    region,
-    token: process.env.RECORD_API_TOKEN,
-  }).toString();
-  const urlFull = `${url}?${urlParams}`;
-
-  return https.get(urlFull);
+  return callRecordGenerator("recordDelete", region, { filename, region });
 }
 
 // also trigger update when record is deleted
 exports.updatesRecordDelete = onValueDeleted(
   "/{region}/users/{userID}/records/{recordID}",
-  (event) => {
+  withSentry("updatesRecordDelete", (event) => {
     const record = event.data.val();
     const filename = getRecordFilename(record);
     const { region } = event.params;
-    
+
     return deleteXML(filename, region);
-  });
+  }));

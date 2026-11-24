@@ -1,6 +1,7 @@
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { defineString } = require('firebase-functions/params');
 const AWS = require("aws-sdk");
+const { withSentry } = require("./sentry");
 
 const awsRegion = defineString('AWS_REGION');
 const awsAccessKeyId = defineString('AWS_ACCESSKEYID');
@@ -50,7 +51,7 @@ const translateText = async (
   });
 };
 
-exports.translate = onCall(async (request) => {
+exports.translate = onCall(withSentry("translate", async (request) => {
   if (!request.auth || !request.auth.token)
     throw new HttpsError("unauthenticated");
 
@@ -60,4 +61,4 @@ exports.translate = onCall(async (request) => {
 
   const res = await translateText(text, fromLang, toLang);
   return res.TranslatedText;
-});
+}));

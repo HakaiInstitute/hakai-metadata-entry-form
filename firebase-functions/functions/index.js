@@ -1,3 +1,7 @@
+// Loaded for the side effect of warning at boot when SENTRY_DSN is unset. The SDK
+// itself is pulled in lazily on the first error - see sentry.js.
+require("./sentry");
+
 const admin = require("firebase-admin");
 const { translate } = require("./translate");
 const { checkURLActive } = require("./serverUtils");
