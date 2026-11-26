@@ -10,7 +10,9 @@ import {
   Tooltip,
   Typography,
   LinearProgress,
+  Snackbar,
 } from "@material-ui/core";
+import Alert from "@material-ui/lab/Alert";
 import { withStyles } from "@material-ui/core/styles";
 import { Save } from "@material-ui/icons";
 import { withRouter } from "react-router-dom";
@@ -36,6 +38,7 @@ import TaxaTab from "../Tabs/TaxaTab"
 import { auth, getAuth, onAuthStateChanged } from "../../auth";
 import firebase from "../../firebase";
 import { firebaseToJSObject, trimStringsInObject } from "../../utils/misc";
+import { isCallerFault } from "../../utils/callableErrors";
 import {
   submitRecord,
   getRegionProjects,
@@ -128,6 +131,10 @@ class MetadataForm extends FormClassTemplate {
       saveIncompleteRecordModalOpen: false,
       doiUpdated: false,
       doiError: false,
+
+      // null, "refused" (the caller isn't entitled to regenerate this record) or
+      // "failed" (the generator itself broke). The record is saved either way.
+      regenerateFailure: null,
     };
   }
 
@@ -438,7 +445,19 @@ class MetadataForm extends FormClassTemplate {
       regenerateXMLforRecord({ path, status, filename, region }).catch((err) => {
         // eslint-disable-next-line no-console
         console.error('Error regenerating XML for record: ', err);
-        Sentry.captureException(err);
+
+        // Until now this failed silently: the save looked clean while the published
+        // files went stale, and a refusal told nobody. Say so either way - the two
+        // cases need different things from the person reading it.
+        this.setState({
+          regenerateFailure: isCallerFault(err) ? "refused" : "failed",
+        });
+
+        // A refusal is the caller getting it wrong, not a fault. The function already
+        // declines to file these itself, via isWorthReporting in sentry.js.
+        if (!isCallerFault(err)) {
+          Sentry.captureException(err);
+        }
       });
     }
 
@@ -469,6 +488,7 @@ class MetadataForm extends FormClassTemplate {
       saveIncompleteRecordModalOpen,
       projects,
       loggedInUserID,
+      regenerateFailure,
     } = this.state;
     const loggedInUserCanEditRecord = isReviewer || loggedInUserOwnsRecord || loggedInUserIsSharedWith;
 
@@ -673,6 +693,52 @@ class MetadataForm extends FormClassTemplate {
             {...tabProps}
           />
         </TabPanel>
+
+        {/* The record saves regardless; what failed is regenerating its published
+            files. Without this the save looked entirely clean. */}
+        <Snackbar
+          open={Boolean(regenerateFailure)}
+          autoHideDuration={12000}
+          onClose={() => this.setState({ regenerateFailure: null })}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        >
+          <Alert
+            severity="warning"
+            onClose={() => this.setState({ regenerateFailure: null })}
+          >
+            {regenerateFailure === "refused" ? (
+              <I18n>
+                <En>
+                  Your changes were saved, but you are not permitted to
+                  regenerate this record&apos;s published files, so they still
+                  show the previous version. Ask a reviewer for your region to
+                  save the record.
+                </En>
+                <Fr>
+                  Vos modifications ont été enregistrées, mais vous n&apos;êtes
+                  pas autorisé à régénérer les fichiers publiés de cet
+                  enregistrement; ceux-ci affichent donc toujours la version
+                  précédente. Demandez à un réviseur de votre région
+                  d&apos;enregistrer la fiche.
+                </Fr>
+              </I18n>
+            ) : (
+              <I18n>
+                <En>
+                  Your changes were saved, but this record&apos;s published
+                  files could not be regenerated and still show the previous
+                  version. The developers have been notified.
+                </En>
+                <Fr>
+                  Vos modifications ont été enregistrées, mais les fichiers
+                  publiés de cet enregistrement n&apos;ont pas pu être régénérés
+                  et affichent toujours la version précédente. Les développeurs
+                  ont été avisés.
+                </Fr>
+              </I18n>
+            )}
+          </Alert>
+        </Snackbar>
       </Grid>
     );
   }
