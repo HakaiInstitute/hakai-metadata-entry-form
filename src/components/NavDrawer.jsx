@@ -37,6 +37,7 @@ import {
   Tooltip,
   MenuItem,
 } from "@material-ui/core";
+import * as Sentry from "@sentry/react";
 import regions from "../regions";
 import { auth, signInWithGoogle } from "../auth";
 
@@ -45,6 +46,15 @@ import { En, Fr, I18n } from "./I18n";
 import { UserContext } from "../providers/UserProvider";
 
 const drawerWidth = 240;
+
+// Every way a person can decline the Google popup. Closing it, having the browser
+// block it, or clicking Sign in twice are all their call, not something to report.
+const expectedSignInErrors = new Set([
+  "auth/cancelled-popup-request",
+  "auth/popup-closed-by-user",
+  "auth/popup-blocked",
+  "auth/user-cancelled",
+]);
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -295,10 +305,13 @@ export default function MiniDrawer({ children }) {
                       await signInWithGoogle();
                       history.push(pathname);
                     } catch (error) {
-                      if (error.code === 'auth/cancelled-popup-request'){
-                        // ignore
-                      }else{
-                        throw error;
+                      // Rethrowing used to be the else branch, but this handler is
+                      // async: a throw here reaches no error boundary - React does
+                      // not catch those in event handlers - and only ever became an
+                      // unhandled rejection that Sentry filed as a crash. Report the
+                      // unexpected ones deliberately instead.
+                      if (!expectedSignInErrors.has(error.code)) {
+                        Sentry.captureException(error);
                       }
                     }
                   }}
