@@ -90,13 +90,28 @@ async function callRecordGenerator(endpoint, region, params) {
     const response = await axios.get(urlFull);
     return response.data;
   } catch (error) {
+    const status = error.response?.status;
+    const body = error.response?.data;
     // Log the generator's own error rather than the bare axios message, which only
     // says "Request failed with status code 500".
     logger.error(
       `${endpoint} failed for region ${region}:`,
-      error.response?.status,
-      error.response?.data ?? error.message
+      status,
+      body ?? error.message
     );
+    // Cloud Logging has the detail above, but Sentry only ever received the axios
+    // message, so every generator failure looked the same there. Hang the status and
+    // the generator's own reply off the error for extraErrorDataIntegration to pick
+    // up. Capped because the reply is the generator's, not ours.
+    if (status !== undefined) {
+      error.generatorStatus = status;
+      error.generatorEndpoint = endpoint;
+      if (body !== undefined) {
+        error.generatorBody = (
+          typeof body === "string" ? body : JSON.stringify(body)
+        ).slice(0, 1000);
+      }
+    }
     throw error;
   }
 }
@@ -170,6 +185,13 @@ exports.regenerateXMLforRecord = onCall(
           "Could not regenerate the record files."
         );
         httpsError.cause = error;
+        // extraErrorDataIntegration reads the captured error itself, not its cause,
+        // so the generator's own detail has to ride on the HttpsError as well.
+        if (error.generatorStatus !== undefined) {
+          httpsError.generatorStatus = error.generatorStatus;
+          httpsError.generatorEndpoint = error.generatorEndpoint;
+          httpsError.generatorBody = error.generatorBody;
+        }
         throw httpsError;
       }
     }

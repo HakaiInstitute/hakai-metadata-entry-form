@@ -353,6 +353,39 @@ class TestRecordUpdate:
             assert resp.status_code == 500
             assert 'Error creating xml' in resp.json['error']
 
+    def test_conversion_failure_leaves_the_existing_files_alone(self, client):
+        # citation_cff raises KeyError('name') on a contact whose organization has no
+        # name. Deleting first meant the record's published files went away and nothing
+        # replaced them, with the removal left staged for the next request to commit.
+        with patch('app.get_records_from_firebase', return_value=[SAMPLE_RECORD]), \
+             patch('app.git_pull'), \
+             patch('app.delete_record') as mock_delete, \
+             patch('app.record_json_to_yaml', return_value={}), \
+             patch('app.metadata_to_xml', return_value='<xml/>'), \
+             patch('yaml.safe_dump', return_value='key: val'), \
+             patch('app.citation_cff', side_effect=KeyError('name')), \
+             patch('app.git_push') as mock_push:
+            resp = client.get('/record?path=hakai/user1/rec1&token=test-token')
+            assert resp.status_code == 500
+            mock_delete.assert_not_called()
+            mock_push.assert_not_called()
+
+    def test_files_are_generated_before_the_old_ones_are_deleted(self, client):
+        calls = []
+        with patch('app.get_records_from_firebase', return_value=[SAMPLE_RECORD]), \
+             patch('app.git_pull'), \
+             patch('app.delete_record', side_effect=lambda *a: calls.append('delete')), \
+             patch('app.record_json_to_yaml', return_value={}), \
+             patch('app.metadata_to_xml', return_value='<xml/>'), \
+             patch('yaml.safe_dump', return_value='key: val'), \
+             patch('app.citation_cff', side_effect=lambda *a, **k: calls.append('cff') or 'cff: 1.0'), \
+             patch('app.global_attributes', return_value='<erddap/>'), \
+             patch('app.git_push'), \
+             patch('pathlib.Path.mkdir'), \
+             patch('builtins.open', mock_open()):
+            client.get('/record?path=hakai/user1/rec1&token=test-token')
+            assert calls == ['cff', 'delete']
+
 
 # ---------------------------------------------------------------------------
 # POST /recordToXML
