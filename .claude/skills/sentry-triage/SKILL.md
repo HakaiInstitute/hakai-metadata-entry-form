@@ -144,9 +144,19 @@ the git index, so a failure can leave a removal uncommitted for a later request 
 sweep up. (The generate-before-delete ordering fixed the main case; keep the
 hazard in mind when touching that route.)
 
-**`auth/popup-closed-by-user`, `auth/popup-blocked`** - user-side, not bugs.
-`isWorthReporting` in `sentry.js` already filters client-fault `HttpsError` codes;
-these come from the browser SDK instead.
+**`mechanism: onunhandledrejection` with `handled: no` on a browser event** - look
+for a `throw` inside an `async` event handler. React does not route those to error
+boundaries, so the throw never reaches `ErrorBoundary` and only becomes an unhandled
+rejection that Sentry files as a crash. One `onClick` in `NavDrawer.jsx` produced
+three separate issues this way (`-AD` `auth/popup-closed-by-user`, `-AB`
+`auth/popup-blocked`, `-AC` the Firebase SDK's "Pending promise was never set"
+assertion) - every one of them somebody declining the Google sign-in popup. Fixed in
+#47. Check for the same shape before taking a browser "crash" at face value.
+
+**Browser `environment` tags before #47** - the React `Sentry.init` had no
+`environment`, so the SDK labelled every build `production`, PR preview channels
+included. On older events read the `url` tag instead: a `*--pr<N>-*.web.app` host is
+a preview build, not production.
 
 ## Closing out
 
