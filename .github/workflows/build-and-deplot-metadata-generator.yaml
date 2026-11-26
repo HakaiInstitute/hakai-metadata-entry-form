@@ -62,7 +62,14 @@ jobs:
         push: true
         tags: ${{ env.PROXY_IMAGE_URL }}
 
+    # CapRover deploy is disabled. It has been failing with "Error: self signed
+    # certificate" since at least 2026-11-19, which silently left the generator
+    # running an old image - the XML regeneration fix in 74719056 built and pushed
+    # fine but never shipped. Kept in place so it can be switched back on once the
+    # server's certificate is sorted out; until then the images are in ghcr and the
+    # deploy is done by hand.
     - name: Deploy Image to CapRrover
+      if: false
       uses: caprover/deploy-from-github@v1.1.2
       with:
         server: "${{ secrets.CAPROVER_SERVER }}"
@@ -71,6 +78,7 @@ jobs:
         image: ${{ env.WEB_IMAGE_URL }}
 
     - name: Deploy Image to CapRrover
+      if: false
       uses: caprover/deploy-from-github@v1.1.2
       with:
         server: "${{ secrets.CAPROVER_SERVER }}"

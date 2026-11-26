@@ -68,7 +68,7 @@ def git_push(files=None):
     _run_with_lock_retry(lambda: origin.push(), "git push")
 
 sentry_sdk.init(
-    dsn="https://e0623f41d68caf57dc1563203f482daf@o4505071053766656.ingest.us.sentry.io/4508490893426688",
+    dsn="https://8fd4b6885cc447c0b11aa0cb3009b0e3@o56764.ingest.sentry.io/5493983",
     traces_sample_rate=1.0,
     profiles_sample_rate=1.0,
 )
@@ -177,16 +177,14 @@ def recordUpdate():
 
     git_pull()
 
-    # delete file if exists already
     print(basename)
-    deleted = delete_record(basename, region)
 
     # ah just let it run, if its a complete file it should work
     if status not in ["submitted", "published"]:
         # the record went back to draft, so its files stay deleted - but the removal is
         # only staged at this point, and leaving it staged would get swept into whatever
         # the next request happens to commit
-        if deleted:
+        if delete_record(basename, region):
             git_push()
         return jsonify(message="")
 
@@ -203,6 +201,13 @@ def recordUpdate():
             record,
             output='xml'
         )
+
+        # Every file has been generated, so it is finally safe to remove the old ones.
+        # This used to run before the conversion: a record the converters choked on -
+        # a contact whose organization carries no name, say - had its published files
+        # deleted and got nothing back in their place, and left the removal staged for
+        # whatever request happened to commit next.
+        delete_record(basename, region)
 
         # create path if doesn't exist
         print(xml_filename)

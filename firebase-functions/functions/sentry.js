@@ -42,6 +42,11 @@ function getSentry() {
         sentry.dedupeIntegration(),
         // Follows .cause, so a wrapped HttpsError still shows the underlying failure.
         sentry.linkedErrorsIntegration(),
+        // defaultIntegrations is off, so without this the fields callRecordGenerator
+        // hangs off its errors are dropped and every generator failure reads as the
+        // bare "Request failed with status code 500", diagnosable only from the
+        // generator container's own logs.
+        sentry.extraErrorDataIntegration(),
       ],
     });
   }
